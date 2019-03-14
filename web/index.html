@@ -16,6 +16,12 @@
         // Add Initialization Here
         Unicorn.Load( "unicorn", "assets/Unicorn.png" );
         Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
+        Unicorn.AddObject( "ball", {
+          type: "circle",
+          x: 0, y: 0,
+          radius: 64,
+          sprite: "unicorn"
+        } );
       }
 
       function Update( timestamp, timeDiffInMs ) {
@@ -40,14 +46,15 @@
 
       window.addEventListener('load', () => {
         Unicorn.Create( "unicorn-display", {
-          width: 1280,
-          height: 720,
+          width: 640,
+          height: 360,
           background: "transparent",
           init: Init,
           update: Update,
           channel: "Instafluff",
           onCommand: OnChatCommand,
-          onChat: OnChatMessage
+          onChat: OnChatMessage,
+          // screenWalls: false // Default: true
         });
       });
     </script>
