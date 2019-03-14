@@ -4,6 +4,7 @@ var objects = {};
 var objectSprite = {};
 var detectEnter = {};
 var detectExit = {};
+var connection = {};
 
 function LoadAsset( name, path ) {
 	var fileExt = path.split('.').pop();
@@ -123,10 +124,42 @@ function AddObject( name, options ) {
 
 function RemoveObject( name ) {
 	if( objects[ name ] ) {
+		delete objectSprite[ objects[ name ].id ];
 		groupWorld.removeChild( objects[ name ] );
 		delete objects[ name ];
 		delete detectEnter[ name ]; // remove any detectors if exist
 		delete detectExit[ name ]; // remove any detectors if exist
+	}
+}
+
+function ConnectObjects( nameA, nameB, options, offsetA, offsetB ) {
+	options = options || {};
+	var constraint = {
+		pointA: offsetA || { x: 0, y: 0 },
+		pointB: offsetB || { x: 0, y: 0 },
+		damping: options.damping || 0,
+		length: options.length,
+		stiffness: options.stiffness || 1
+	};
+	var constraintName = nameA + "_" + nameB;
+	if( objects[ nameA ] ) {
+		constraint.bodyA = objects[ nameA ];
+	}
+	if( objects[ nameB ] ) {
+		constraint.bodyB = objects[ nameB ];
+	}
+	connection[ constraintName ] = Matter.Constraint.create( constraint );
+	Matter.Composite.add( physics.world, connection[ constraintName ] );
+}
+
+function DisconnectObjects( nameA, nameB ) {
+	if( connection[ nameA + "_" + nameB ] ) {
+		Matter.Composite.remove( physics.world, connection[ nameA + "_" + nameB ] );
+		delete connection[ nameA + "_" + nameB ];
+	}
+	else if( connection[ nameB + "_" + nameA ] ) {
+		Matter.Composite.remove( physics.world, connection[ nameB + "_" + nameA ] );
+		delete connection[ nameB + "_" + nameA ];
 	}
 }
 
@@ -253,6 +286,8 @@ window.Unicorn = {
 	RemoveOverlay: RemoveOverlay,
 	AddObject: AddObject,
 	RemoveObject: RemoveObject,
+	ConnectObjects: ConnectObjects,
+	DisconnectObjects: DisconnectObjects,
 	AddDetector: AddDetector,
 	RemoveDetector: RemoveDetector,
 	Assets: assetReference,

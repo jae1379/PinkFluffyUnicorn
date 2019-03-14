@@ -34,13 +34,29 @@
         }, ( label, body ) => {
           console.log( "Exit:", label, body );
         } );
-        Unicorn.AddObject( "ball", {
+        Unicorn.AddObject( "ball1", {
           type: "circle",
           x: 64, y: 64,
           radius: 64,
           sprite: "ball",
           friction: 0.01
         } );
+        Unicorn.AddObject( "ball2", {
+          type: "circle",
+          x: 256, y: 64,
+          radius: 64,
+          sprite: "ball",
+          friction: 0.02
+        } );
+        Unicorn.ConnectObjects( "ball1", "ball2", {
+          length: 192,
+          damping: 0.5,
+          stiffness: 0.2
+        } );
+        Unicorn.ConnectObjects( "", "ball2", {
+          damping: 0.5,
+          stiffness: 0.2
+        }, { x: 300, y: 0 } );
       }
 
       function Update( timestamp, timeDiffInMs ) {
