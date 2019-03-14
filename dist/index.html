@@ -3,17 +3,16 @@
     <title>Pink Fluffy Unicorn Game Engine</title>
     <link href="https://fonts.googleapis.com/css?family=Bubblegum+Sans" rel="stylesheet">
     <link rel='stylesheet' href='unicorn.css' />
-    <script src="lib/pixi.min.js"></script>
-    <script src="lib/matter.min.js"></script>
-    <script src="lib/comfy.min.js"></script>
     <script src="pinkfluffyunicorn.js"></script>
   </head>
   <body>
     <h1>Pink Fluffy Unicorn Game Engine</h1>
     <div id="unicorn-display"></div>
     <script>
+      var counter = 0;
       function Init() {
         // Add Initialization Here
+        Unicorn.Load( "fart", "assets/fart-2.wav" );
         Unicorn.Load( "unicorn", "assets/Unicorn.png" );
         Unicorn.Load( "ball", "assets/Ball.png" );
         Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
@@ -22,7 +21,7 @@
           x: 64, y: 300,
           width: 128, height: 128,
           sprite: "unicorn",
-          bounce: 3,
+          // bounce: 3,
           isStatic: true
         } );
         Unicorn.AddDetector( "detect", {
@@ -31,6 +30,9 @@
           width: 128, height: 128
         }, ( label, body ) => {
           console.log( "Enter:", label, body );
+          Unicorn.PlaySound( "fart", {
+            volume: 0.25
+          } );
         }, ( label, body ) => {
           console.log( "Exit:", label, body );
         } );
@@ -72,6 +74,29 @@
         if( flags.broadcaster && command == "test" ) {
           console.log( "!test was typed in chat" );
         }
+        if( flags.broadcaster && command == "disconnect" ) {
+          Unicorn.DisconnectObjects( "", "ball2" );
+        }
+        if( command == "ball" ) {
+          Unicorn.AddObject( "bam" + counter++, {
+            type: "circle",
+            x: 128, y: 64,
+            radius: 64,
+            sprite: "ball",
+            friction: 0.02
+          } );
+        }
+        if( command == "balls" ) {
+          for( var i = 0; i < 5; i++ ) {
+            Unicorn.AddObject( "bam" + counter++, {
+              type: "circle",
+              x: 128, y: 64,
+              radius: 64,
+              sprite: "ball",
+              friction: 0.02
+            } );
+          }
+        }
       }
 
       function OnChatMessage( user, message, flags, self ) {
@@ -81,8 +106,8 @@
 
       window.addEventListener('load', () => {
         Unicorn.Create( "unicorn-display", {
-          width: 640,
-          height: 360,
+          width: 1280,
+          height: 720,
           background: "transparent",
           init: Init,
           update: Update,
@@ -90,7 +115,7 @@
           onCommand: OnChatCommand,
           onChat: OnChatMessage,
           // screenWalls: false // Default: true
-          // gravity: { x: 0, y: 1 } // Default: { x: 0, y: 1 }
+          // gravity: { x: 0, y: 0.5 } // Default: { x: 0, y: 1 }
         });
       });
     </script>

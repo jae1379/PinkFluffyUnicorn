@@ -1,3 +1,12 @@
+import "./lib/pixi.min.js";
+import "./lib/pixi-sound.js";
+import "./lib/matter.min.js";
+import "./lib/comfy.min.js";
+// var pixi = require("./lib/pixi.min");
+// var pixi_sound = require("./lib/pixi-sound");
+// var matter = require("./lib/matter.min");
+// var comfy = require("./lib/comfy.min");
+
 var assetReference = {};
 var overlays = {};
 var objects = {};
@@ -5,6 +14,11 @@ var objectSprite = {};
 var detectEnter = {};
 var detectExit = {};
 var connection = {};
+
+// TODO: Webpack
+// TODO: Add debug render for sprite-less objects
+// TODO: Add Text Rendering
+// TODO: Add Input Support
 
 function LoadAsset( name, path ) {
 	var fileExt = path.split('.').pop();
@@ -16,8 +30,19 @@ function LoadAsset( name, path ) {
 		case "gif":
 			assetReference[ name ] = PIXI.Texture.from( path );
 			break;
+		case "wav":
+		case "mp3":
+			assetReference[ name ] = PIXI.sound.Sound.from( path );
+			break;
 		default:
 			throw new Error( "Unsupported File Format: " + fileExt );
+	}
+}
+
+function PlaySound( name, options ) {
+	if( assetReference[ name ] ) {
+		assetReference[ name ].volume = options.volume || 1;
+		assetReference[ name ].play();
 	}
 }
 
@@ -294,6 +319,7 @@ window.Unicorn = {
 	DisconnectObjects: DisconnectObjects,
 	AddDetector: AddDetector,
 	RemoveDetector: RemoveDetector,
+	PlaySound: PlaySound,
 	Raycast: Raycast,
 	Assets: assetReference,
 	Overlays: overlays,
