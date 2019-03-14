@@ -2,6 +2,8 @@ var assetReference = {};
 var overlays = {};
 var objects = {};
 var objectSprite = {};
+var detectEnter = {};
+var detectExit = {};
 
 function LoadAsset( name, path ) {
 	var fileExt = path.split('.').pop();
@@ -45,6 +47,18 @@ function RemoveOverlay( name ) {
 	}
 }
 
+function AddDetector( name, options, onEnter, onExit ) {
+	options = Object.assign( options, {
+		onEnter: onEnter,
+		onExit: onExit
+	} );
+	return AddObject( name, options );
+}
+
+function RemoveDetector( name ) {
+	RemoveObject( name );
+}
+
 function AddObject( name, options ) {
 	try {
 		// TODO: Check that the object name doesn't already exist
@@ -75,6 +89,17 @@ function AddObject( name, options ) {
 			body.isStatic = options.isStatic || false;
 			body.restitution = options.bounce || 0;
 			body.torque = options.torque || 0;
+			body.label = name;
+			if( options.onEnter ) {
+				body.isSensor = true;
+				body.isStatic = true;
+				detectEnter[ name ] = options.onEnter;
+			}
+			if( options.onExit ) {
+				body.isSensor = true;
+				body.isStatic = true;
+				detectExit[ name ] = options.onExit;
+			}
 
 			var sprite = new PIXI.Sprite(
 				assetReference[ options.sprite ]
@@ -98,8 +123,10 @@ function AddObject( name, options ) {
 
 function RemoveObject( name ) {
 	if( objects[ name ] ) {
-		// app.stage.removeChild( objects[ name ] );
+		groupWorld.removeChild( objects[ name ] );
 		delete objects[ name ];
+		delete detectEnter[ name ]; // remove any detectors if exist
+		delete detectExit[ name ]; // remove any detectors if exist
 	}
 }
 
@@ -151,6 +178,38 @@ function createTheUnicorn( element, options ) {
 				Matter.Bodies.rectangle( opts.width + 50, opts.height / 2, 100, opts.height, { isStatic: true } )
 			] );
 		}
+		Matter.Events.on( physics, 'collisionStart', function( event ) {
+			var pairs = event.pairs;
+			for( var i = 0, j = pairs.length; i != j; ++i ) {
+				var pair = pairs[ i ];
+				if( pair.bodyA.isSensor ) {
+					if( detectEnter[ pair.bodyA.label ] ) {
+						detectEnter[ pair.bodyA.label ]( pair.bodyB.label, pair.bodyB );
+					}
+				}
+				else if ( pair.bodyB.isSensor ) {
+					if( detectEnter[ pair.bodyB.label ] ) {
+						detectEnter[ pair.bodyB.label ]( pair.bodyA.label, pair.bodyA );
+					}
+				}
+			}
+		} );
+		Matter.Events.on( physics, 'collisionEnd', function( event ) {
+			var pairs = event.pairs;
+			for( var i = 0, j = pairs.length; i != j; ++i ) {
+				var pair = pairs[ i ];
+				if( pair.bodyA.isSensor ) {
+					if( detectExit[ pair.bodyA.label ] ) {
+						detectExit[ pair.bodyA.label ]( pair.bodyB.label, pair.bodyB );
+					}
+				}
+				else if ( pair.bodyB.isSensor ) {
+					if( detectExit[ pair.bodyB.label ] ) {
+						detectExit[ pair.bodyB.label ]( pair.bodyA.label, pair.bodyA );
+					}
+				}
+			}
+		} );
 		Matter.Engine.run( physics );
 		// Initialize the engine
 		opts.init();
@@ -194,6 +253,8 @@ window.Unicorn = {
 	RemoveOverlay: RemoveOverlay,
 	AddObject: AddObject,
 	RemoveObject: RemoveObject,
+	AddDetector: AddDetector,
+	RemoveDetector: RemoveDetector,
 	Assets: assetReference,
 	Overlays: overlays,
 	Objects: objects

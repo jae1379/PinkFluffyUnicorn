@@ -25,6 +25,15 @@
           bounce: 3,
           isStatic: true
         } );
+        Unicorn.AddDetector( "detect", {
+          type: "rectangle",
+          x: 64, y: 300,
+          width: 128, height: 128
+        }, ( label, body ) => {
+          console.log( "Enter:", label, body );
+        }, ( label, body ) => {
+          console.log( "Exit:", label, body );
+        } );
         Unicorn.AddObject( "ball", {
           type: "circle",
           x: 64, y: 64,
