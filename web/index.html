@@ -15,12 +15,22 @@
       function Init() {
         // Add Initialization Here
         Unicorn.Load( "unicorn", "assets/Unicorn.png" );
+        Unicorn.Load( "ball", "assets/Ball.png" );
         Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
+        Unicorn.AddObject( "box", {
+          type: "rectangle",
+          x: 64, y: 300,
+          width: 128, height: 128,
+          sprite: "unicorn",
+          bounce: 3,
+          isStatic: true
+        } );
         Unicorn.AddObject( "ball", {
           type: "circle",
-          x: 0, y: 0,
+          x: 64, y: 64,
           radius: 64,
-          sprite: "unicorn"
+          sprite: "ball",
+          friction: 0.01
         } );
       }
 
@@ -55,6 +65,7 @@
           onCommand: OnChatCommand,
           onChat: OnChatMessage,
           // screenWalls: false // Default: true
+          // gravity: { x: 0, y: 1 } // Default: { x: 0, y: 1 }
         });
       });
     </script>

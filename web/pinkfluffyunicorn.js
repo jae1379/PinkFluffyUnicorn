@@ -58,9 +58,24 @@ function AddObject( name, options ) {
 				case "circle":
 					body = Matter.Bodies.circle( options.x, options.y, options.radius );
 					break;
+				case "rectangle":
+					body = Matter.Bodies.rectangle( options.x, options.y, options.width, options.height );
+					break;
+				// TODO: Add Custom Polygon Object Support
 				default:
 					throw new Error( "Unsupported Object Type", options.type );
 			}
+			// Set the body values
+			body.angle = options.angle || 0;
+			body.density = options.density || 0.001;
+			body.force = options.force || { x: 0, y: 0 };
+			body.friction = options.friction || 0.1;
+			body.frictionAir = options.frictionAir || 0.01;
+			body.frictionStatic = options.frictionStatic || 0.5;
+			body.isStatic = options.isStatic || false;
+			body.restitution = options.bounce || 0;
+			body.torque = options.torque || 0;
+
 			var sprite = new PIXI.Sprite(
 				assetReference[ options.sprite ]
 			);
@@ -125,6 +140,8 @@ function createTheUnicorn( element, options ) {
 			ComfyJS.onChat = opts.onChat;
 		}
 		physics = Matter.Engine.create();
+		physics.world.gravity.x = opts.gravity ? opts.gravity.x : 0;
+		physics.world.gravity.y = opts.gravity ? opts.gravity.y : 1;
 		if( opts.screenWalls || typeof opts.screenWalls === "undefined" ) {
 			// Set Walls
 			Matter.World.add( physics.world, [
