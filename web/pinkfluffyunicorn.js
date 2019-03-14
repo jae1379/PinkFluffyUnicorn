@@ -163,6 +163,10 @@ function DisconnectObjects( nameA, nameB ) {
 	}
 }
 
+function Raycast( pointA, pointB ) {
+	return Matter.Query.ray( Matter.Composite.allBodies( physics.world ), pointA, pointB );
+}
+
 var app = undefined;
 var groupOverlay = undefined;
 var groupWorld = undefined;
@@ -290,6 +294,7 @@ window.Unicorn = {
 	DisconnectObjects: DisconnectObjects,
 	AddDetector: AddDetector,
 	RemoveDetector: RemoveDetector,
+	Raycast: Raycast,
 	Assets: assetReference,
 	Overlays: overlays,
 	Objects: objects
