@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.2.3",
+    "webpack-concat-plugin": "^3.0.0"
   }
 }
