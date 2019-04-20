@@ -6,8 +6,6 @@ var detectEnter = {};
 var detectExit = {};
 var connection = {};
 
-// TODO: Webpack
-// TODO: Add debug render for sprite-less objects
 // TODO: Add Text Rendering
 // TODO: Add Input Support
 
@@ -66,6 +64,7 @@ function RemoveOverlay( name ) {
 
 function AddDetector( name, options, onEnter, onExit ) {
 	options = Object.assign( options, {
+		isDetector: true,
 		onEnter: onEnter,
 		onExit: onExit
 	} );
@@ -118,15 +117,48 @@ function AddObject( name, options ) {
 				detectExit[ name ] = options.onExit;
 			}
 
-			var sprite = new PIXI.Sprite(
-				assetReference[ options.sprite ]
-			);
-			sprite.anchor.set( 0.5 );
-			sprite.x = body.position.x;
-			sprite.y = body.position.y;
-			sprite.rotation = body.angle;
-			objectSprite[ body.id ] = sprite;
-			groupWorld.addChild( sprite );
+			if( options.sprite ) {
+				var sprite = new PIXI.Sprite(
+					assetReference[ options.sprite ]
+				);
+				sprite.anchor.set( 0.5 );
+				sprite.x = body.position.x;
+				sprite.y = body.position.y;
+				sprite.rotation = body.angle;
+				objectSprite[ body.id ] = sprite;
+				groupWorld.addChild( sprite );
+			}
+			else if( !options.isDetector ) {
+				// Create a debug object
+				var sprite = new PIXI.Graphics();
+				sprite.lineStyle( 2, 0xFFFFFF, 1 );
+				if( options.color ) {
+					if( typeof options.color === "string" || options.color instanceof String ) {
+						options.color = PIXI.utils.string2hex( options.color );
+					}
+					sprite.beginFill( options.color );
+				}
+				else {
+					sprite.beginFill( PIXI.utils.string2hex( getRandomColor() ) );
+				}
+				switch( options.type.toLowerCase() ) {
+					case "circle":
+						sprite.drawCircle( 0, 0, options.radius );
+						break;
+					case "rectangle":
+						sprite.drawRect( -options.width / 2, -options.height / 2, options.width, options.height );
+						break;
+					// TODO: Add Custom Polygon Object Support
+					default:
+						throw new Error( "Unsupported Object Type", options.type );
+				}
+				sprite.endFill();
+				sprite.x = body.position.x;
+				sprite.y = body.position.y;
+				sprite.rotation = body.angle;
+				objectSprite[ body.id ] = sprite;
+				groupWorld.addChild( sprite );
+			}
 			objects[ name ] = body;
 			Matter.World.add( physics.world, [ body ] );
 			return body;
@@ -181,6 +213,15 @@ function DisconnectObjects( nameA, nameB ) {
 
 function Raycast( pointA, pointB ) {
 	return Matter.Query.ray( Matter.Composite.allBodies( physics.world ), pointA, pointB );
+}
+
+function getRandomColor() {
+	var letters = '0123456789ABCDEF';
+	var color = '#';
+	for (var i = 0; i < 6; i++) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
 }
 
 var app = undefined;
