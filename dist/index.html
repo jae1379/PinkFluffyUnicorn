@@ -41,7 +41,13 @@
           x: 64, y: 64,
           radius: 64,
           sprite: "ball",
-          friction: 0.01
+          friction: 0.01,
+          onHover: function() {
+            this.alpha = 0.5;
+          },
+          onLeave: function() {
+            this.alpha = 1;
+          }
         } );
         Unicorn.AddObject( "ball2", {
           type: "circle",

@@ -7,7 +7,6 @@ var detectExit = {};
 var connection = {};
 
 // TODO: Add Text Rendering
-// TODO: Add Input Support
 
 function LoadAsset( name, path ) {
 	var fileExt = path.split('.').pop();
@@ -35,7 +34,7 @@ function PlaySound( name, options ) {
 	}
 }
 
-function AddOverlay( name, assetName, x, y ) {
+function AddOverlay( name, assetName, x, y, options ) {
 	try {
 		// TODO: Check that the overlay name doesn't already exist
 		if( name ) {
@@ -46,6 +45,34 @@ function AddOverlay( name, assetName, x, y ) {
 			sprite.y = y;
 			groupOverlay.addChild( sprite );
 			overlays[ name ] = sprite;
+			if( options ) {
+				var isInteractive = false;
+				if( options.onPress instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerdown", options.onPress );
+				}
+				if( options.onRelease instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerup", options.onRelease );
+					sprite.on( "pointerupoutside", options.onRelease );
+				}
+				if( options.onHover instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerover", options.onHover );
+				}
+				if( options.onLeave instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerout", options.onLeave );
+				}
+				if( options.onMove instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointermove", options.onMove );
+				}
+				if( isInteractive ) {
+					sprite.interactive = true;
+					sprite.buttonMode = true;
+				}
+			}
 			return sprite;
 		}
 	}
@@ -127,6 +154,32 @@ function AddObject( name, options ) {
 				sprite.rotation = body.angle;
 				objectSprite[ body.id ] = sprite;
 				groupWorld.addChild( sprite );
+				var isInteractive = false;
+				if( options.onPress instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerdown", options.onPress );
+				}
+				if( options.onRelease instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerup", options.onRelease );
+					sprite.on( "pointerupoutside", options.onRelease );
+				}
+				if( options.onHover instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerover", options.onHover );
+				}
+				if( options.onLeave instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerout", options.onLeave );
+				}
+				if( options.onMove instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointermove", options.onMove );
+				}
+				if( isInteractive ) {
+					sprite.interactive = true;
+					sprite.buttonMode = true;
+				}
 			}
 			else if( !options.isDetector ) {
 				// Create a debug object
@@ -158,6 +211,32 @@ function AddObject( name, options ) {
 				sprite.rotation = body.angle;
 				objectSprite[ body.id ] = sprite;
 				groupWorld.addChild( sprite );
+				var isInteractive = false;
+				if( options.onPress instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerdown", options.onPress );
+				}
+				if( options.onRelease instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerup", options.onRelease );
+					sprite.on( "pointerupoutside", options.onRelease );
+				}
+				if( options.onHover instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerover", options.onHover );
+				}
+				if( options.onLeave instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerout", options.onLeave );
+				}
+				if( options.onMove instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointermove", options.onMove );
+				}
+				if( isInteractive ) {
+					sprite.interactive = true;
+					sprite.buttonMode = true;
+				}
 			}
 			objects[ name ] = body;
 			Matter.World.add( physics.world, [ body ] );
