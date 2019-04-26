@@ -65,6 +65,17 @@
           damping: 0.5,
           stiffness: 0.2
         }, { x: 300, y: 0 } );
+        Unicorn.AddParticles( "fireworks", {
+          shape: "circle", // "cone", "line"
+          // startColor: "#88ff00",
+          // endColor: "#ff0088",
+          startColor: "#FB8200",
+          endColor: "#FEBE79",
+          intensity: 10, // Scale from 1 - 10
+          minSpeed: 0.1,
+          maxSpeed: 0.25,
+          decay: 1, // Scale from 0 - 10
+        }, 100, 100);
       }
 
       function Update( timestamp, timeDiffInMs ) {
@@ -114,7 +125,7 @@
         Unicorn.Create( "unicorn-display", {
           width: 1280,
           height: 720,
-          background: "transparent",
+          background: "#000000",// "transparent",
           init: Init,
           update: Update,
           channel: "Instafluff",

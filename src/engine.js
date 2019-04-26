@@ -2,6 +2,8 @@ var assetReference = {};
 var overlays = {};
 var objects = {};
 var objectSprite = {};
+var particles = {};
+var particleImage = null;
 var detectEnter = {};
 var detectExit = {};
 var connection = {};
@@ -290,6 +292,55 @@ function DisconnectObjects( nameA, nameB ) {
 	}
 }
 
+function AddParticles( name, options, x, y ) {
+	try {
+		// TODO: Check that the overlay name doesn't already exist
+		if( name ) {
+			let particleTimer = setInterval( function() {
+				var texture = PIXI.Texture.fromImage( particleImage );
+				for( var i = 0; i < 10; i++ ) {
+					var pImage = new PIXI.Sprite( texture );
+					pImage.x = x;
+					pImage.y = y;
+					pImage.blendMode = PIXI.BLEND_MODES.ADD;
+					if( typeof options.startColor === "string" || options.startColor instanceof String ) {
+						options.startColor = PIXI.utils.string2hex( options.startColor );
+					}
+					if( typeof options.endColor === "string" || options.endColor instanceof String ) {
+						options.endColor = PIXI.utils.string2hex( options.endColor );
+					}
+					pImage.tint = options.startColor;
+					var particleLife = Math.random() * options.decay * 1000;
+					var particle = {
+						image: pImage,
+						x: x,
+						y: y,
+						startColor: options.startColor,
+						endColor: options.endColor,
+						angle: Math.random() * Math.PI * 2,
+						velocity: Math.random() * ( options.maxSpeed - options.minSpeed ) + options.minSpeed,
+						maxLife: particleLife,
+						life: particleLife
+					};
+					// console.log( pImage );
+					groupOverlay.addChild( pImage );
+					particles[ name ].points.push( particle );
+				}
+			}, 1000 / options.intensity );
+			particles[ name ] = {
+				timer: particleTimer,
+				options: options,
+				points: []
+			};
+			return particles[ name ];
+		}
+	}
+	catch( err ) {
+		console.log( "Failed to add particles", err );
+	}
+	return null;
+}
+
 function Raycast( pointA, pointB ) {
 	return Matter.Query.ray( Matter.Composite.allBodies( physics.world ), pointA, pointB );
 }
@@ -301,6 +352,21 @@ function getRandomColor() {
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;
+}
+
+function lerpColor( colorA, colorB, progress ) {
+	try {
+		var cA = PIXI.utils.hex2rgb( colorA );
+		var cB = PIXI.utils.hex2rgb( colorB );
+		var cResult = [ 0, 0, 0 ];
+		for( var i = 0; i < 3; i++ ) {
+			cResult[ i ] = cA[ i ] + ( cB[ i ] - cA[ i ] ) * progress;
+		}
+		return PIXI.utils.rgb2hex( cResult );
+	}
+	catch( err ) {
+		console.log( err );
+	}
 }
 
 var app = undefined;
@@ -384,6 +450,8 @@ function createTheUnicorn( element, options ) {
 			}
 		} );
 		Matter.Engine.run( physics );
+		particleImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAQAAAC0jZKKAAACPElEQVR4AbXXcW/TMBAF8EtCypa1LCDB9/98ILG1dKNNCOZZT8h6N4562eZTzH8/ni6dfWns4kqtvbMOT2tmv+0XasG/F1aTLFxd5lDcCS8o0tyX58K9bVA9WZe40LNNqLkevrJr1HvrC1vgQoM820/UqQZubQBKWDKjDJjP+wg41/J/eAOQsGb2rWDlvKzMTyEMaJvBIHNpBdswOfhoZ4VL2h3Irc+srSiJPYv9B1Mr3IHcCS2ZJTFf2+RZ1NEWD5PF7mmQ/nfs85I9klb4KrNCa2YkZitcXmVZpwL3zFtwpYH6l3cWtqDMPP+Fb+zWPthW6BvUIJmZuOTN7APqKOjB9vZAuAM6ArvFE9CSeI5Y1B7PPfAFMPKMKMWVZmbCzKusoveoKcODjQDzgx3c6GnUFnADOAFGV5V16B7PI2BkBRjgmf4IWBbYu8I6lPuhSa2w4xP8k7CF/l5Q7HuiZW9ST+wpjgKLvP9ed6gAJXztWcG/2CaAJ/tKlJSnm7RTTHHATQAnwAFKWCn/H3y2eH2L2ZfDIf06rXD8m768l//cAvzN/kBe709a8cPFQ4jXFA8hHpvVh1D9scmrqfbYrD/oO0s5caYrDvraqwlwW3811V6mvXUrLtOq6x+NYCt0vIqv/2hgcUPWqoFFRixlB9tEIxZHWKHJLmuGQraifijUMTbIq63QzDLGrh+8wVYO3rI6nzdohc+81H3cDHiijxvNfAJ9Wv855hJL5nnlB2Tw8ojzC7UelrXqk/cPn233eGpGsfAAAAAASUVORK5CYII=";
+
 		// Initialize the engine
 		opts.init();
 		window.requestAnimationFrame( updateTheUnicorn );
@@ -410,6 +478,32 @@ function updateTheUnicorn( timestamp ) {
 				sprite.rotation = b.angle;
 			}
 		});
+		var timeDiff = timestamp - prevStep;
+		for( var part in particles ) {
+			for( var p = 0; p < particles[ part ].points.length; p++ ) {
+				var particle = particles[ part ].points[ p ];
+				particle.life -= timeDiff;
+				if( particle.life <= 0 ) {
+					// DELETE!
+					particles[ part ].points.splice( p, 1 );
+					groupOverlay.removeChild( particle.image );
+					p--;
+					continue;
+				}
+				else {
+					particle.x += Math.cos( particle.angle ) * particle.velocity * timeDiff;
+					particle.y += Math.sin( particle.angle ) * particle.velocity * timeDiff;
+					particle.image.x = particle.x;
+					particle.image.y = particle.y;
+					var invProgress = particle.life / particle.maxLife;
+					var progress = 1.0 - invProgress;
+					// particle.image.alpha = invProgress;
+					particle.image.scale = { x: invProgress, y: invProgress };
+					particle.image.tint = lerpColor( particle.startColor, particle.endColor, progress );
+					// console.log( particle );
+				}
+			};
+		}
 		opts.update( timestamp, timestamp - prevStep );
 		prevStep = timestamp;
 		window.requestAnimationFrame( updateTheUnicorn );
@@ -430,6 +524,7 @@ window.Unicorn = {
 	DisconnectObjects: DisconnectObjects,
 	AddDetector: AddDetector,
 	RemoveDetector: RemoveDetector,
+	AddParticles: AddParticles,
 	PlaySound: PlaySound,
 	Raycast: Raycast,
 	Assets: assetReference,
