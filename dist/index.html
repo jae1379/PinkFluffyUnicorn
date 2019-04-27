@@ -6,7 +6,6 @@
     <script src="pinkfluffyunicorn.min.js"></script>
   </head>
   <body>
-    <h1>Pink Fluffy Unicorn Game Engine</h1>
     <div id="unicorn-display"></div>
     <script>
       var counter = 0;
@@ -16,6 +15,12 @@
         Unicorn.Load( "unicorn", "assets/Unicorn.png" );
         Unicorn.Load( "ball", "assets/Ball.png" );
         Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
+        Unicorn.AddText( "title", "Pink Fluffy Unicorn Game Engine", 50, 50, {
+          fontFamily: 'Bubblegum Sans',
+          fontSize: 36,
+          fontWeight: 'bold',
+          fill: "#ffffff"
+        });
         Unicorn.AddObject( "box", {
           type: "rectangle",
           x: 64, y: 300,

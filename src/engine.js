@@ -4,11 +4,17 @@ var objects = {};
 var objectSprite = {};
 var particles = {};
 var particleImage = null;
+var texts = {};
 var detectEnter = {};
 var detectExit = {};
 var connection = {};
 
-// TODO: Add Text Rendering
+// TODO: Layer Support (add a Z-depth parameter)
+// TODO: Custom Width/Height Support
+
+function CropAsset( name, srcName, x, y, width, height ) {
+	return assetReference[ name ] = new PIXI.Texture( assetReference[ srcName ], new PIXI.Rectangle( x, y, width, height ) );
+}
 
 function LoadAsset( name, path ) {
 	var fileExt = path.split('.').pop();
@@ -18,12 +24,11 @@ function LoadAsset( name, path ) {
 		case "svg":
 		case "jpeg":
 		case "gif":
-			assetReference[ name ] = PIXI.Texture.from( path );
-			break;
+		case "mp4":
+			return assetReference[ name ] = PIXI.Texture.from( path );
 		case "wav":
 		case "mp3":
-			assetReference[ name ] = PIXI.sound.Sound.from( path );
-			break;
+			return assetReference[ name ] = PIXI.sound.Sound.from( path );
 		default:
 			throw new Error( "Unsupported File Format: " + fileExt );
 	}
@@ -88,6 +93,30 @@ function RemoveOverlay( name ) {
 	if( overlays[ name ] ) {
 		groupOverlay.removeChild( overlays[ name ] );
 		delete overlays[ name ];
+	}
+}
+
+function AddText( name, text, x, y, options ) {
+	try {
+		if( name ) {
+			var textObj = new PIXI.Text( text, new PIXI.TextStyle( options ) );
+			textObj.x = x;
+			textObj.y = y;
+			groupOverlay.addChild( textObj );
+			texts[ name ] = textObj;
+			return textObj;
+		}
+	}
+	catch( err ) {
+		console.log( "Failed to add text", err );
+	}
+	return null;
+}
+
+function RemoveText( name ) {
+	if( texts[ name ] ) {
+		groupOverlay.removeChild( texts[ name ] );
+		delete texts[ name ];
 	}
 }
 
@@ -182,6 +211,7 @@ function AddObject( name, options ) {
 					sprite.interactive = true;
 					sprite.buttonMode = true;
 				}
+				body.sprite = sprite;
 			}
 			else if( !options.isDetector ) {
 				// Create a debug object
@@ -253,8 +283,10 @@ function AddObject( name, options ) {
 
 function RemoveObject( name ) {
 	if( objects[ name ] ) {
+		groupWorld.removeChild( objectSprite[ objects[ name ].id ] );
 		delete objectSprite[ objects[ name ].id ];
 		groupWorld.removeChild( objects[ name ] );
+		Matter.Composite.remove( physics.world, objects[ name ] );
 		delete objects[ name ];
 		delete detectEnter[ name ]; // remove any detectors if exist
 		delete detectExit[ name ]; // remove any detectors if exist
@@ -408,14 +440,36 @@ function createTheUnicorn( element, options ) {
 		physics = Matter.Engine.create();
 		physics.world.gravity.x = opts.gravity ? opts.gravity.x : 0;
 		physics.world.gravity.y = opts.gravity ? opts.gravity.y : 1;
-		if( opts.screenWalls || typeof opts.screenWalls === "undefined" ) {
-			// Set Walls
-			Matter.World.add( physics.world, [
-				Matter.Bodies.rectangle( opts.width / 2, -50, opts.width, 100, { isStatic: true } ),
-				Matter.Bodies.rectangle( opts.width / 2, opts.height + 50, opts.width, 100, { isStatic: true } ),
-				Matter.Bodies.rectangle( -50, opts.height / 2, 100, opts.height, { isStatic: true } ),
-				Matter.Bodies.rectangle( opts.width + 50, opts.height / 2, 100, opts.height, { isStatic: true } )
-			] );
+		var topWall = false;
+		var botWall = false;
+		var leftWall = false;
+		var rightWall = false;
+		if( opts.screenWalls ) {
+			topWall = botWall = leftWall = rightWall = true;
+		}
+		else if( typeof opts.screenWalls === "undefined" ) {
+			if( opts.wallTop || opts.wallBottom || opts.wallLeft || opts.wallRight ) {
+				topWall = opts.wallTop;
+				botWall = opts.wallBottom;
+				leftWall = opts.wallLeft;
+				rightWall = opts.wallRight;
+			}
+			else {
+				topWall = botWall = leftWall = rightWall = true;
+			}
+		}
+		// Set Walls
+		if( topWall ) {
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width / 2, -50, opts.width, 100, { isStatic: true } ) ] );
+		}
+		if( botWall ) {
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width / 2, opts.height + 50, opts.width, 100, { isStatic: true } ) ] );
+		}
+		if( leftWall ) {
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( -50, opts.height / 2, 100, opts.height, { isStatic: true } ) ] );
+		}
+		if( rightWall ) {
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width + 50, opts.height / 2, 100, opts.height, { isStatic: true } ) ] );
 		}
 		Matter.Events.on( physics, 'collisionStart', function( event ) {
 			var pairs = event.pairs;
@@ -516,12 +570,15 @@ function updateTheUnicorn( timestamp ) {
 window.Unicorn = {
 	Create: createTheUnicorn,
 	Load: LoadAsset,
+	Crop: CropAsset,
 	AddOverlay: AddOverlay,
 	RemoveOverlay: RemoveOverlay,
 	AddObject: AddObject,
 	RemoveObject: RemoveObject,
 	ConnectObjects: ConnectObjects,
 	DisconnectObjects: DisconnectObjects,
+	AddText: AddText,
+	RemoveText: RemoveText,
 	AddDetector: AddDetector,
 	RemoveDetector: RemoveDetector,
 	AddParticles: AddParticles,
