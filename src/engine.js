@@ -164,14 +164,14 @@ function AddObject( name, options ) {
 			body.restitution = options.bounce || 0;
 			body.torque = options.torque || 0;
 			body.label = name;
-			if( options.onEnter ) {
+			if( options.isDetector ) {
 				body.isSensor = true;
 				body.isStatic = true;
+			}
+			if( options.onEnter ) {
 				detectEnter[ name ] = options.onEnter;
 			}
 			if( options.onExit ) {
-				body.isSensor = true;
-				body.isStatic = true;
 				detectExit[ name ] = options.onExit;
 			}
 
@@ -334,7 +334,7 @@ function AddParticles( name, options, x, y ) {
 					var pImage = new PIXI.Sprite( texture );
 					pImage.x = x;
 					pImage.y = y;
-					pImage.blendMode = PIXI.BLEND_MODES.ADD;
+					pImage.blendMode = options.blendMode || PIXI.BLEND_MODES.ADD;
 					if( typeof options.startColor === "string" || options.startColor instanceof String ) {
 						options.startColor = PIXI.utils.string2hex( options.startColor );
 					}
@@ -360,6 +360,7 @@ function AddParticles( name, options, x, y ) {
 				}
 			}, 1000 / options.intensity );
 			particles[ name ] = {
+				name: name,
 				timer: particleTimer,
 				options: options,
 				points: []
@@ -371,6 +372,13 @@ function AddParticles( name, options, x, y ) {
 		console.log( "Failed to add particles", err );
 	}
 	return null;
+}
+
+function RemoveParticles( name, options, x, y ) {
+	if( particles[ name ] ) {
+		clearInterval( particles[ name ].timer );
+		particles[ name ].isDeleted = true;
+	}
 }
 
 function Raycast( pointA, pointB ) {
@@ -460,16 +468,16 @@ function createTheUnicorn( element, options ) {
 		}
 		// Set Walls
 		if( topWall ) {
-			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width / 2, -50, opts.width, 100, { isStatic: true } ) ] );
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width / 2, -50, opts.width * 2, 100, { isStatic: true } ) ] );
 		}
 		if( botWall ) {
-			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width / 2, opts.height + 50, opts.width, 100, { isStatic: true } ) ] );
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width / 2, opts.height + 50, opts.width * 2, 100, { isStatic: true } ) ] );
 		}
 		if( leftWall ) {
-			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( -50, opts.height / 2, 100, opts.height, { isStatic: true } ) ] );
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( -50, opts.height / 2, 100, opts.height * 2, { isStatic: true } ) ] );
 		}
 		if( rightWall ) {
-			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width + 50, opts.height / 2, 100, opts.height, { isStatic: true } ) ] );
+			Matter.World.add( physics.world, [ Matter.Bodies.rectangle( opts.width + 50, opts.height / 2, 100, opts.height * 2, { isStatic: true } ) ] );
 		}
 		Matter.Events.on( physics, 'collisionStart', function( event ) {
 			var pairs = event.pairs;
@@ -481,6 +489,14 @@ function createTheUnicorn( element, options ) {
 					}
 				}
 				else if ( pair.bodyB.isSensor ) {
+					if( detectEnter[ pair.bodyB.label ] ) {
+						detectEnter[ pair.bodyB.label ]( pair.bodyA.label, pair.bodyA );
+					}
+				}
+				else {
+					if( detectEnter[ pair.bodyA.label ] ) {
+						detectEnter[ pair.bodyA.label ]( pair.bodyB.label, pair.bodyB );
+					}
 					if( detectEnter[ pair.bodyB.label ] ) {
 						detectEnter[ pair.bodyB.label ]( pair.bodyA.label, pair.bodyA );
 					}
@@ -497,6 +513,14 @@ function createTheUnicorn( element, options ) {
 					}
 				}
 				else if ( pair.bodyB.isSensor ) {
+					if( detectExit[ pair.bodyB.label ] ) {
+						detectExit[ pair.bodyB.label ]( pair.bodyA.label, pair.bodyA );
+					}
+				}
+				else {
+					if( detectExit[ pair.bodyA.label ] ) {
+						detectExit[ pair.bodyA.label ]( pair.bodyB.label, pair.bodyB );
+					}
 					if( detectExit[ pair.bodyB.label ] ) {
 						detectExit[ pair.bodyB.label ]( pair.bodyA.label, pair.bodyA );
 					}
@@ -534,29 +558,34 @@ function updateTheUnicorn( timestamp ) {
 		});
 		var timeDiff = timestamp - prevStep;
 		for( var part in particles ) {
-			for( var p = 0; p < particles[ part ].points.length; p++ ) {
-				var particle = particles[ part ].points[ p ];
-				particle.life -= timeDiff;
-				if( particle.life <= 0 ) {
-					// DELETE!
-					particles[ part ].points.splice( p, 1 );
-					groupOverlay.removeChild( particle.image );
-					p--;
-					continue;
-				}
-				else {
-					particle.x += Math.cos( particle.angle ) * particle.velocity * timeDiff;
-					particle.y += Math.sin( particle.angle ) * particle.velocity * timeDiff;
-					particle.image.x = particle.x;
-					particle.image.y = particle.y;
-					var invProgress = particle.life / particle.maxLife;
-					var progress = 1.0 - invProgress;
-					// particle.image.alpha = invProgress;
-					particle.image.scale = { x: invProgress, y: invProgress };
-					particle.image.tint = lerpColor( particle.startColor, particle.endColor, progress );
-					// console.log( particle );
-				}
-			};
+			if( particles[ part ].isDeleted && particles[ part ].points.length <= 0 ) {
+				delete particles[ part ];
+			}
+			else {
+				for( var p = 0; p < particles[ part ].points.length; p++ ) {
+					var particle = particles[ part ].points[ p ];
+					particle.life -= timeDiff;
+					if( particle.life <= 0 ) {
+						// DELETE!
+						particles[ part ].points.splice( p, 1 );
+						groupOverlay.removeChild( particle.image );
+						p--;
+						continue;
+					}
+					else {
+						particle.x += Math.cos( particle.angle ) * particle.velocity * timeDiff;
+						particle.y += Math.sin( particle.angle ) * particle.velocity * timeDiff;
+						particle.image.x = particle.x;
+						particle.image.y = particle.y;
+						var invProgress = particle.life / particle.maxLife;
+						var progress = 1.0 - invProgress;
+						// particle.image.alpha = invProgress;
+						particle.image.scale = { x: invProgress, y: invProgress };
+						particle.image.tint = lerpColor( particle.startColor, particle.endColor, progress );
+						// console.log( particle );
+					}
+				};
+			}
 		}
 		opts.update( timestamp, timestamp - prevStep );
 		prevStep = timestamp;
@@ -582,6 +611,7 @@ window.Unicorn = {
 	AddDetector: AddDetector,
 	RemoveDetector: RemoveDetector,
 	AddParticles: AddParticles,
+	RemoveParticles: RemoveParticles,
 	PlaySound: PlaySound,
 	Raycast: Raycast,
 	Assets: assetReference,
