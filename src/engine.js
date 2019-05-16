@@ -4,6 +4,7 @@ var objects = {};
 var objectSprite = {};
 var particles = {};
 var particleImage = null;
+var timers = {};
 var texts = {};
 var detectEnter = {};
 var detectExit = {};
@@ -293,6 +294,47 @@ function RemoveObject( name ) {
 	}
 }
 
+function SetPosition( name, posX, posY ) {
+	if( objects[ name ] ) {
+		Matter.Body.setPosition( objects[ name ], { x: posX, y: posY } );
+	}
+}
+
+function SetVelocity( name, velX, velY ) {
+	if( objects[ name ] ) {
+		Matter.Body.setVelocity( objects[ name ], { x: velX, y: velY } );
+	}
+}
+
+function AddTimer( name, time, callback ) {
+	try {
+		// TODO: Check that the timer name doesn't already exist
+		if( name ) {
+			timers[ name ] = {
+				time: time,
+				callback: callback
+			};
+			return timers[ name ];
+		}
+	}
+	catch( err ) {
+		console.log( "Failed to add timer", err );
+	}
+	return null;
+}
+
+function ResetTimer( name, time ) {
+	if( timers[ name ] ) {
+		timers[ name ].time = time;
+	}
+}
+
+function RemoveTimer( name ) {
+	if( timers[ name ] ) {
+		delete timers[ name ];
+	}
+}
+
 function ConnectObjects( nameA, nameB, options, offsetA, offsetB ) {
 	options = options || {};
 	var constraint = {
@@ -557,6 +599,14 @@ function updateTheUnicorn( timestamp ) {
 			}
 		});
 		var timeDiff = timestamp - prevStep;
+		Object.keys( timers ).forEach( t => {
+			if( timers[ t ].time > 0 ) {
+				timers[ t ].time -= timeDiff;
+				if( timers[ t ].time <= 0 ) {
+					timers[ t ].callback();
+				}
+			}
+		});
 		for( var part in particles ) {
 			if( particles[ part ].isDeleted && particles[ part ].points.length <= 0 ) {
 				delete particles[ part ];
@@ -612,6 +662,11 @@ window.Unicorn = {
 	RemoveDetector: RemoveDetector,
 	AddParticles: AddParticles,
 	RemoveParticles: RemoveParticles,
+	AddTimer: AddTimer,
+	ResetTimer: ResetTimer,
+	RemoveTimer: RemoveTimer,
+	SetPosition: SetPosition,
+	SetVelocity: SetVelocity,
 	PlaySound: PlaySound,
 	Raycast: Raycast,
 	Assets: assetReference,

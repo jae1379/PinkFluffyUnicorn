@@ -81,6 +81,10 @@
           maxSpeed: 0.25,
           decay: 1, // Scale from 0 - 10
         }, 100, 100);
+        Unicorn.AddTimer( "boom", 5000, () => {
+          Unicorn.SetVelocity( "ball1", 50, -10 );
+          Unicorn.ResetTimer( "boom", 2000 );
+        } )
       }
 
       function Update( timestamp, timeDiffInMs ) {
@@ -99,7 +103,10 @@
         if( flags.broadcaster && command == "disconnect" ) {
           Unicorn.DisconnectObjects( "", "ball2" );
         }
-        if( command == "ball" ) {
+        if( command === "boom" ) {
+          Unicorn.SetVelocity( "ball1", -50, -10 );
+        }
+        if( command === "ball" ) {
           Unicorn.AddObject( "bam" + counter++, {
             type: "circle",
             x: 128, y: 64,
@@ -108,7 +115,7 @@
             friction: 0.02
           } );
         }
-        if( command == "balls" ) {
+        if( command === "balls" ) {
           for( var i = 0; i < 5; i++ ) {
             Unicorn.AddObject( "bam" + counter++, {
               type: "circle",
