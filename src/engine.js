@@ -31,7 +31,13 @@ function LoadAsset( name, path ) {
 		case "mp3":
 			return assetReference[ name ] = PIXI.sound.Sound.from( path );
 		default:
-			throw new Error( "Unsupported File Format: " + fileExt );
+			if( path.startsWith( "http://" ) || path.startsWith( "https://" ) ) {
+				// Assume an image
+				return assetReference[ name ] = PIXI.Texture.from( path );
+			}
+			else {
+				throw new Error( "Unsupported File Format: " + fileExt );
+			}
 	}
 }
 
