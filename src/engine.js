@@ -489,7 +489,12 @@ function createTheUnicorn( element, options ) {
 		groupOverlay = new PIXI.Container();
 		app.stage.addChild( groupOverlay );
 		if( opts.channel ) {
-			ComfyJS.Init( opts.channel );
+			if( opts.username && opts.password ) {
+				ComfyJS.Init( opts.username, opts.password, [ opts.channel ] );
+			}
+			else {
+				ComfyJS.Init( opts.channel );
+			}
 			ComfyJS.onCommand = opts.onCommand;
 			ComfyJS.onChat = opts.onChat;
 		}
