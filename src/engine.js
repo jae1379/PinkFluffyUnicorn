@@ -41,6 +41,17 @@ function LoadAsset( name, path ) {
 	}
 }
 
+function LoadAssetCustom( name, asset, type, options ) {
+	switch( type ) {
+		case "texture":
+			return assetReference[ name ] = PIXI.Texture.from( asset, options );
+		case "sound":
+			return assetReference[ name ] = PIXI.sound.Sound.from( asset );
+		default:
+			throw new Error( "Unsupported Asset Type: " + type );
+	}
+}
+
 function PlaySound( name, options ) {
 	if( assetReference[ name ] ) {
 		assetReference[ name ].volume = options.volume || 1;
@@ -660,6 +671,7 @@ function updateTheUnicorn( timestamp ) {
 window.Unicorn = {
 	Create: createTheUnicorn,
 	Load: LoadAsset,
+	LoadCustom: LoadAssetCustom,
 	Crop: CropAsset,
 	AddOverlay: AddOverlay,
 	RemoveOverlay: RemoveOverlay,
