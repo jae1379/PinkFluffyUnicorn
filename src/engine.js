@@ -59,6 +59,61 @@ function PlaySound( name, options ) {
 	}
 }
 
+function AddBacklay( name, assetName, x, y, options ) {
+	try {
+		// TODO: Check that the overlay name doesn't already exist
+		if( name ) {
+			var sprite = new PIXI.Sprite(
+				assetReference[ assetName ]
+			);
+			sprite.x = x;
+			sprite.y = y;
+			groupBacklay.addChild( sprite );
+			overlays[ name ] = sprite;
+			if( options ) {
+				var isInteractive = false;
+				if( options.onPress instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerdown", options.onPress );
+				}
+				if( options.onRelease instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerup", options.onRelease );
+					sprite.on( "pointerupoutside", options.onRelease );
+				}
+				if( options.onHover instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerover", options.onHover );
+				}
+				if( options.onLeave instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointerout", options.onLeave );
+				}
+				if( options.onMove instanceof Function ) {
+					isInteractive = true;
+					sprite.on( "pointermove", options.onMove );
+				}
+				if( isInteractive ) {
+					sprite.interactive = true;
+					sprite.buttonMode = true;
+				}
+			}
+			return sprite;
+		}
+	}
+	catch( err ) {
+		console.log( "Failed to add overlay", err );
+	}
+	return null;
+}
+
+function RemoveBacklay( name ) {
+	if( overlays[ name ] ) {
+		groupBacklay.removeChild( overlays[ name ] );
+		delete overlays[ name ];
+	}
+}
+
 function AddOverlay( name, assetName, x, y, options ) {
 	try {
 		// TODO: Check that the overlay name doesn't already exist
@@ -234,7 +289,7 @@ function AddObject( name, options ) {
 			else if( !options.isDetector ) {
 				// Create a debug object
 				var sprite = new PIXI.Graphics();
-				sprite.lineStyle( 2, 0xFFFFFF, 1 );
+				sprite.lineStyle( 2, 0xFFFFFF, options.outlineThickness || 1 );
 				if( options.color ) {
 					if( typeof options.color === "string" || options.color instanceof String ) {
 						options.color = PIXI.utils.string2hex( options.color );
@@ -287,6 +342,7 @@ function AddObject( name, options ) {
 					sprite.interactive = true;
 					sprite.buttonMode = true;
 				}
+				body.sprite = sprite;
 			}
 			objects[ name ] = body;
 			Matter.World.add( physics.world, [ body ] );
@@ -491,6 +547,7 @@ function lerpColor( colorA, colorB, progress ) {
 }
 
 var app = undefined;
+var groupBacklay = undefined;
 var groupOverlay = undefined;
 var groupWorld = undefined;
 var opts = undefined;
@@ -517,6 +574,8 @@ function createTheUnicorn( element, options ) {
 		else {
 			throw new Error( "Invalid Element Type" );
 		}
+		groupBacklay = new PIXI.Container();
+		app.stage.addChild( groupBacklay );
 		groupWorld = new PIXI.Container();
 		app.stage.addChild( groupWorld );
 		groupOverlay = new PIXI.Container();
@@ -695,6 +754,8 @@ window.Unicorn = {
 	Load: LoadAsset,
 	LoadCustom: LoadAssetCustom,
 	Crop: CropAsset,
+	AddBacklay: AddBacklay,
+	RemoveBacklay: RemoveBacklay,
 	AddOverlay: AddOverlay,
 	RemoveOverlay: RemoveOverlay,
 	AddObject: AddObject,
