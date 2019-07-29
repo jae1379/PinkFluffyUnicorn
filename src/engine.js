@@ -388,9 +388,10 @@ function AddParticles( name, options, x, y ) {
 		// TODO: Check that the overlay name doesn't already exist
 		if( name ) {
 			let particleTimer = setInterval( function() {
-				var texture = PIXI.Texture.fromImage( particleImage );
+				var texture = PIXI.Texture.fromImage( options.image || particleImage );
 				for( var i = 0; i < 10; i++ ) {
 					var pImage = new PIXI.Sprite( texture );
+					pImage.anchor.set( 0.5 );
 					pImage.x = x;
 					pImage.y = y;
 					pImage.blendMode = options.blendMode || PIXI.BLEND_MODES.ADD;
@@ -400,6 +401,10 @@ function AddParticles( name, options, x, y ) {
 					if( typeof options.endColor === "string" || options.endColor instanceof String ) {
 						options.endColor = PIXI.utils.string2hex( options.endColor );
 					}
+					options.angle = options.angle || 0;
+					options.spread = options.spread || 0;
+					options.lineDirection = options.lineDirection || 0;
+					options.length = options.length || app.view.width;
 					pImage.tint = options.startColor;
 					var particleLife = Math.random() * options.decay * 1000;
 					var particle = {
@@ -408,11 +413,28 @@ function AddParticles( name, options, x, y ) {
 						y: y,
 						startColor: options.startColor,
 						endColor: options.endColor,
-						angle: Math.random() * Math.PI * 2,
+						// angle: Math.random() * Math.PI * 2,
 						velocity: Math.random() * ( options.maxSpeed - options.minSpeed ) + options.minSpeed,
 						maxLife: particleLife,
 						life: particleLife
 					};
+					switch( options.shape ) {
+						case "circle":
+							particle.angle = Math.random() * Math.PI * 2;
+							break;
+						case "cone":
+							particle.angle = options.angle + Math.random() * options.spread - options.spread / 2;
+							break;
+						case "line":
+							particle.x += Math.cos( options.lineDirection ) * Math.random() * options.length;
+							particle.y += Math.sin( options.lineDirection ) * Math.random() * options.length;
+							particle.angle = options.angle + Math.random() * options.spread - options.spread / 2;
+							break;
+					}
+					pImage.x = particle.x;
+					pImage.y = particle.y;
+					var invProgress = particle.life / particle.maxLife;
+					particle.image.scale = { x: invProgress, y: invProgress };
 					// console.log( pImage );
 					groupOverlay.addChild( pImage );
 					particles[ name ].points.push( particle );

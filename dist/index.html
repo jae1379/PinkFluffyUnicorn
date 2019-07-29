@@ -14,77 +14,176 @@
         Unicorn.Load( "fart", "assets/fart-2.wav" );
         Unicorn.Load( "unicorn", "assets/Unicorn.png" );
         Unicorn.Load( "ball", "assets/Ball.png" );
-        Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
-        Unicorn.AddText( "title", "Pink Fluffy Unicorn Game Engine", 50, 50, {
-          fontFamily: 'Bubblegum Sans',
-          fontSize: 36,
-          fontWeight: 'bold',
-          fill: "#ffffff"
-        });
-        Unicorn.AddObject( "box", {
-          type: "rectangle",
-          x: 64, y: 300,
-          width: 128, height: 128,
-          // sprite: "unicorn",
-          // bounce: 3,
-          isStatic: true
-        } );
-        Unicorn.AddDetector( "detect", {
-          type: "rectangle",
-          x: 64, y: 300,
-          width: 128, height: 128
-        }, ( label, body ) => {
-          console.log( "Enter:", label, body );
-          Unicorn.PlaySound( "fart", {
-            volume: 0.25
-          } );
-        }, ( label, body ) => {
-          console.log( "Exit:", label, body );
-        } );
-        Unicorn.AddObject( "ball1", {
-          type: "circle",
-          x: 64, y: 64,
-          radius: 64,
-          sprite: "ball",
-          friction: 0.01,
-          onHover: function() {
-            this.alpha = 0.5;
-          },
-          onLeave: function() {
-            this.alpha = 1;
-          }
-        } );
-        Unicorn.AddObject( "ball2", {
-          type: "circle",
-          x: 256, y: 64,
-          radius: 64,
-          // sprite: "ball",
-          friction: 0.02
-        } );
-        Unicorn.ConnectObjects( "ball1", "ball2", {
-          length: 192,
-          damping: 0.5,
-          stiffness: 0.2
-        } );
-        Unicorn.ConnectObjects( "", "ball2", {
-          damping: 0.5,
-          stiffness: 0.2
-        }, { x: 300, y: 0 } );
-        Unicorn.AddParticles( "fireworks", {
-          shape: "circle", // "cone", "line"
+        // Unicorn.Load( "hamster", "assets/rainbowHammie.png" );
+        // Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
+        // Unicorn.AddText( "title", "Pink Fluffy Unicorn Game Engine", 50, 50, {
+        //   fontFamily: 'Bubblegum Sans',
+        //   fontSize: 36,
+        //   fontWeight: 'bold',
+        //   fill: "#ffffff"
+        // });
+        // Unicorn.AddObject( "box", {
+        //   type: "rectangle",
+        //   x: 64, y: 300,
+        //   width: 128, height: 128,
+        //   // sprite: "unicorn",
+        //   // bounce: 3,
+        //   isStatic: true
+        // } );
+        // Unicorn.AddDetector( "detect", {
+        //   type: "rectangle",
+        //   x: 64, y: 300,
+        //   width: 128, height: 128
+        // }, ( label, body ) => {
+        //   console.log( "Enter:", label, body );
+        //   Unicorn.PlaySound( "fart", {
+        //     volume: 0.25
+        //   } );
+        // }, ( label, body ) => {
+        //   console.log( "Exit:", label, body );
+        // } );
+        // Unicorn.AddObject( "ball1", {
+        //   type: "circle",
+        //   x: 64, y: 64,
+        //   radius: 64,
+        //   sprite: "ball",
+        //   friction: 0.01,
+        //   onHover: function() {
+        //     this.alpha = 0.5;
+        //   },
+        //   onLeave: function() {
+        //     this.alpha = 1;
+        //   }
+        // } );
+        // Unicorn.AddObject( "ball2", {
+        //   type: "circle",
+        //   x: 256, y: 64,
+        //   radius: 64,
+        //   // sprite: "ball",
+        //   friction: 0.02
+        // } );
+        // Unicorn.ConnectObjects( "ball1", "ball2", {
+        //   length: 192,
+        //   damping: 0.5,
+        //   stiffness: 0.2
+        // } );
+        // Unicorn.ConnectObjects( "", "ball2", {
+        //   damping: 0.5,
+        //   stiffness: 0.2
+        // }, { x: 300, y: 0 } );
+        // Unicorn.AddParticles( "WIND", {
+        //   blendMode: PIXI.BLEND_MODES.MULTIPLY,
+        //   shape: "line", // "cone", "line"
+        //   lineDirection: Math.PI / 2,
+        //   // length: 400,
+        //   angle: 0,
+        //   startColor: "#333333",
+        //   endColor: "#000000",
+        //   intensity: 20, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 2.25,
+        //   decay: 0.5, // Scale from 0 - 10
+        // }, -100, 0);
+        // Unicorn.AddParticles( "windysnow", {
+        //   blendMode: PIXI.BLEND_MODES.DEFAULT,
+        //   shape: "line", // "cone", "line"
+        //   // lineDirection: 0,
+        //   length: 1920,
+        //   angle: Math.PI / 4,
+        //   // startColor: "#88ff00",
+        //   // endColor: "#ff0088",
+        //   startColor: "#ffffff",
+        //   endColor: "#ffffff",
+        //   intensity: 5, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 1.25,
+        //   decay: 5, // Scale from 0 - 10
+        // }, -640, 0);
+        // Unicorn.AddParticles( "ROOFISONFIRE", {
+        //   blendMode: PIXI.BLEND_MODES.DEFAULT,
+        //   shape: "line", // "cone", "line"
+        //   // lineDirection: 0,
+        //   // length: 400,
+        //   angle: Math.PI / 2,
+        //   startColor: "#ff0000",
+        //   endColor: "#FB8200",
+        //   intensity: 10000, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 0.25,
+        //   decay: 2, // Scale from 0 - 10
+        // }, 0, 0);
+        // Unicorn.AddParticles( "FIRE", {
+        //   blendMode: PIXI.BLEND_MODES.DEFAULT,
+        //   shape: "line", // "cone", "line"
+        //   // lineDirection: 0,
+        //   // length: 400,
+        //   angle: -Math.PI / 2,
+        //   startColor: "#ff0000",
+        //   endColor: "#FB8200",
+        //   intensity: 10000, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 0.25,
+        //   decay: 2, // Scale from 0 - 10
+        // }, 0, 720);
+        // Unicorn.AddParticles( "snow", {
+        //   blendMode: PIXI.BLEND_MODES.DEFAULT,
+        //   shape: "line", // "cone", "line"
+        //   // lineDirection: 0,
+        //   // length: 400,
+        //   angle: Math.PI / 2,
+        //   // startColor: "#88ff00",
+        //   // endColor: "#ff0088",
+        //   startColor: "#ffffff",
+        //   endColor: "#ffffff",
+        //   intensity: 4, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 1.25,
+        //   decay: 5, // Scale from 0 - 10
+        // }, 0, 0);
+        Unicorn.AddParticles( "rain", {
+          blendMode: PIXI.BLEND_MODES.OVERLAY,
+          shape: "line", // "cone", "line"
+          // lineDirection: 0,
+          // length: 400,
+          image: "assets/rainbowHammie.png",
+          angle: Math.PI / 2,
           // startColor: "#88ff00",
           // endColor: "#ff0088",
-          startColor: "#FB8200",
-          endColor: "#FEBE79",
-          intensity: 10, // Scale from 1 - 10
+          startColor: "#ffffff",
+          endColor: "#ffffff",
+          intensity: 1, // Scale from 1 - 10
           minSpeed: 0.1,
           maxSpeed: 0.25,
-          decay: 1, // Scale from 0 - 10
-        }, 100, 100);
-        Unicorn.AddTimer( "boom", 5000, () => {
-          Unicorn.SetVelocity( "ball1", 50, -10 );
-          Unicorn.ResetTimer( "boom", 2000 );
-        } )
+          decay: 10, // Scale from 0 - 10
+        }, 0, 0);
+        // Unicorn.AddParticles( "blastoff", {
+        //   shape: "cone", // "cone", "line"
+        //   angle: Math.PI / 2,
+        //   spread: Math.PI / 2,
+        //   // startColor: "#88ff00",
+        //   endColor: "#ff0088",
+        //   startColor: "#FB8200",
+        //   // endColor: "#FEBE79",
+        //   intensity: 50, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 0.25,
+        //   decay: 1, // Scale from 0 - 10
+        // }, 600, 100);
+        // Unicorn.AddParticles( "fireworks", {
+        //   shape: "circle", // "cone", "line"
+        //   // startColor: "#88ff00",
+        //   // endColor: "#ff0088",
+        //   startColor: "#FB8200",
+        //   endColor: "#FEBE79",
+        //   intensity: 10, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 0.25,
+        //   decay: 1, // Scale from 0 - 10
+        // }, 100, 100);
+        // Unicorn.AddTimer( "boom", 5000, () => {
+        //   Unicorn.SetVelocity( "ball1", 50, -10 );
+        //   Unicorn.ResetTimer( "boom", 2000 );
+        // } )
       }
 
       function Update( timestamp, timeDiffInMs ) {
@@ -137,7 +236,8 @@
         Unicorn.Create( "unicorn-display", {
           width: 1280,
           height: 720,
-          background: "#000000",// "transparent",
+          // background: "#000000",// "transparent",
+          background: "transparent",
           init: Init,
           update: Update,
           channel: "Instafluff",
