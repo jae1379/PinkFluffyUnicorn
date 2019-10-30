@@ -9,9 +9,286 @@
     <div id="unicorn-display"></div>
     <script>
       var counter = 0;
+      function launchTacos() {
+        counter++;
+        switch( Math.floor( 8 * Math.random() ) ) {
+          case 0:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2 + Math.PI / 10,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -50);
+            break;
+          case 1:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2 - Math.PI / 10,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -70);
+            break;
+          case 2:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2 + Math.PI / 5,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -59);
+            break;
+          case 3:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -100);
+            break;
+          case 4:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2 + Math.PI / 10,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -50);
+            break;
+          case 5:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2 - Math.PI / 10,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -70);
+            break;
+          case 6:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2 + Math.PI / 5,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -59);
+            break;
+          case 7:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.NORMAL,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              startColor: "#ffffff",
+              endColor: "#ffffff",
+              angle: Math.PI / 2,
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.25,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: "assets/tacoParticle.png",
+            }, 0, -100);
+            break;
+        }
+        stopConfetti( "Confetti" + counter );
+      }
+
+      function launchConfetti( imageOverride = "" ) {
+        counter++;
+        switch( Math.floor( 8 * Math.random() ) ) {
+          case 0:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2 + Math.PI / 10,
+              startColor: "#ff0000",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti.png",
+            }, 0, -50);
+            break;
+          case 1:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2 - Math.PI / 10,
+              startColor: "#00ff00",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti4.png",
+            }, 0, -70);
+            break;
+          case 2:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2 + Math.PI / 5,
+              startColor: "#ffff00",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti3.png",
+            }, 0, -59);
+            break;
+          case 3:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2,
+              startColor: "#0000ff",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti2.png",
+            }, 0, -100);
+            break;
+          case 4:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2 + Math.PI / 10,
+              startColor: "#ff0000",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti4.png",
+            }, 0, -50);
+            break;
+          case 5:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2 - Math.PI / 10,
+              startColor: "#00ff00",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti1.png",
+            }, 0, -70);
+            break;
+          case 6:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2 + Math.PI / 5,
+              startColor: "#ffff00",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti.png",
+            }, 0, -59);
+            break;
+          case 7:
+            Unicorn.AddParticles( "Confetti" + counter, {
+              blendMode: PIXI.BLEND_MODES.DEFAULT,
+              shape: "line", // "cone", "line"
+              // lineDirection: 0,
+              // length: 400,
+              angle: Math.PI / 2,
+              startColor: "#0000ff",
+              endColor: "#FB8200",
+              intensity: 0.75, // Scale from 1 - 10
+              minSpeed: 0.05,
+              maxSpeed: 0.5,
+              decay: 10, // Scale from 0 - 10
+              image: imageOverride || "assets/confetti3.png",
+            }, 0, -100);
+            break;
+        }
+        stopConfetti( "Confetti" + counter );
+      }
+
+      function stopConfetti( name ) {
+        setTimeout( () => {
+          Unicorn.RemoveParticles( name );
+        }, 2000 );
+      }
+
       function Init() {
         // Add Initialization Here
         Unicorn.Load( "fart", "assets/fart-2.wav" );
+        Unicorn.Load( "yay", "assets/yay.mp3" );
         Unicorn.Load( "unicorn", "assets/Unicorn.png" );
         Unicorn.Load( "ball", "assets/Ball.png" );
         // Unicorn.Load( "hamster", "assets/rainbowHammie.png" );
@@ -84,6 +361,7 @@
         //   maxSpeed: 2.25,
         //   decay: 0.5, // Scale from 0 - 10
         // }, -100, 0);
+
         // Unicorn.AddParticles( "windysnow", {
         //   blendMode: PIXI.BLEND_MODES.DEFAULT,
         //   shape: "line", // "cone", "line"
@@ -140,22 +418,22 @@
         //   maxSpeed: 1.25,
         //   decay: 5, // Scale from 0 - 10
         // }, 0, 0);
-        Unicorn.AddParticles( "rain", {
-          blendMode: PIXI.BLEND_MODES.OVERLAY,
-          shape: "line", // "cone", "line"
-          // lineDirection: 0,
-          // length: 400,
-          image: "assets/rainbowHammie.png",
-          angle: Math.PI / 2,
-          // startColor: "#88ff00",
-          // endColor: "#ff0088",
-          startColor: "#ffffff",
-          endColor: "#ffffff",
-          intensity: 1, // Scale from 1 - 10
-          minSpeed: 0.1,
-          maxSpeed: 0.25,
-          decay: 10, // Scale from 0 - 10
-        }, 0, 0);
+        // Unicorn.AddParticles( "rain", {
+        //   blendMode: PIXI.BLEND_MODES.OVERLAY,
+        //   shape: "line", // "cone", "line"
+        //   // lineDirection: 0,
+        //   // length: 400,
+        //   image: "assets/rainbowHammie.png",
+        //   angle: Math.PI / 2,
+        //   // startColor: "#88ff00",
+        //   // endColor: "#ff0088",
+        //   startColor: "#ffffff",
+        //   endColor: "#ffffff",
+        //   intensity: 1, // Scale from 1 - 10
+        //   minSpeed: 0.1,
+        //   maxSpeed: 0.25,
+        //   decay: 10, // Scale from 0 - 10
+        // }, 0, 0);
         // Unicorn.AddParticles( "blastoff", {
         //   shape: "cone", // "cone", "line"
         //   angle: Math.PI / 2,
@@ -194,13 +472,43 @@
         }
       }
 
-      function OnChatCommand( user, command, message, flags ) {
+      function OnChatCommand( user, command, message, flags, extra ) {
         // Handle Chat Commands
         if( flags.broadcaster && command == "test" ) {
           console.log( "!test was typed in chat" );
         }
         if( flags.broadcaster && command == "disconnect" ) {
           Unicorn.DisconnectObjects( "", "ball2" );
+        }
+        if( extra.customRewardId === "24769436-b87c-4370-ab32-e475bebea7a3" ) {
+          for( var i = 0; i < 50; i++ ) {
+            launchConfetti();
+          }
+          setTimeout( () => {
+            Unicorn.PlaySound( "yay", {
+              volume: 0.25
+            } );
+          }, 1000 );
+        }
+        if( command === "tacos" ) {
+          for( var i = 0; i < 8; i++ ) {
+            launchTacos();
+          }
+        }
+        if( command === "confetti" ||
+            command === "party" ||
+            command === "birthday" ||
+            command === "celebrate" ||
+            command === "yay" ) {
+          for( var i = 0; i < 8; i++ ) {
+            launchConfetti();
+          }
+          // setTimeout( () => {
+          //   Unicorn.PlaySound( "yay", {
+          //     volume: 0.25
+          //   } );
+          //   // stopConfetti();
+          // }, 1000 );
         }
         if( command === "boom" ) {
           Unicorn.SetVelocity( "ball1", -50, -10 );
@@ -227,9 +535,18 @@
         }
       }
 
-      function OnChatMessage( user, message, flags, self ) {
+      function OnChatMessage( user, message, flags, self, extra ) {
         // Handle Chat Messages
-        console.log( message );
+        if( extra.customRewardId === "24769436-b87c-4370-ab32-e475bebea7a3" ) {
+          for( var i = 0; i < 50; i++ ) {
+            launchConfetti();
+          }
+          setTimeout( () => {
+            Unicorn.PlaySound( "yay", {
+              volume: 0.25
+            } );
+          }, 1000 );
+        }
       }
 
       window.addEventListener('load', () => {
