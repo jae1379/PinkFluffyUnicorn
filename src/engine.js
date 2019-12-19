@@ -126,6 +126,9 @@ function AddOverlay( name, assetName, x, y, options ) {
 			groupOverlay.addChild( sprite );
 			overlays[ name ] = sprite;
 			if( options ) {
+				if( options.z ) {
+					sprite.zIndex = options.z;
+				}
 				var isInteractive = false;
 				if( options.onPress instanceof Function ) {
 					isInteractive = true;
@@ -177,6 +180,11 @@ function AddText( name, text, x, y, options ) {
 			textObj.y = y;
 			groupOverlay.addChild( textObj );
 			texts[ name ] = textObj;
+			if( options ) {
+				if( options.z ) {
+					textObj.zIndex = options.z;
+				}
+			}
 			return textObj;
 		}
 	}
@@ -257,6 +265,9 @@ function AddObject( name, options ) {
 				sprite.y = body.position.y;
 				sprite.rotation = body.angle;
 				objectSprite[ body.id ] = sprite;
+				if( options.z ) {
+					sprite.zIndex = options.z;
+				}
 				groupWorld.addChild( sprite );
 				var isInteractive = false;
 				if( options.onPress instanceof Function ) {
@@ -315,6 +326,9 @@ function AddObject( name, options ) {
 				sprite.y = body.position.y;
 				sprite.rotation = body.angle;
 				objectSprite[ body.id ] = sprite;
+				if( options.z ) {
+					sprite.zIndex = options.z;
+				}
 				groupWorld.addChild( sprite );
 				var isInteractive = false;
 				if( options.onPress instanceof Function ) {
@@ -594,10 +608,13 @@ function createTheUnicorn( element, options ) {
 			throw new Error( "Invalid Element Type" );
 		}
 		groupBacklay = new PIXI.Container();
+		groupBacklay.sortableChildren = true;
 		app.stage.addChild( groupBacklay );
 		groupWorld = new PIXI.Container();
+		groupWorld.sortableChildren = true;
 		app.stage.addChild( groupWorld );
 		groupOverlay = new PIXI.Container();
+		groupOverlay.sortableChildren = true;
 		app.stage.addChild( groupOverlay );
 		if( opts.channel ) {
 			if( opts.username && opts.password ) {
