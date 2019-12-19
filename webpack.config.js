@@ -15,7 +15,7 @@ module.exports = {
             sourceMap: true,
             name: 'pinkfluffyunicorn',
             fileName: 'pinkfluffyunicorn.min.js',
-            filesToConcat: ['./src/lib/matter.min.js','./src/lib/pixi.min.js','./src/lib/pixi-sound.js','./src/lib/comfy.min.js','./src/engine.js' ]
+            filesToConcat: ['./src/lib/matter.min.js','./src/lib/pixi-legacy.min.js','./src/lib/pixi-sound.js','./src/lib/comfy.min.js','./src/engine.js' ]
         })
     ]
 };
