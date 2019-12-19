@@ -7,8 +7,15 @@
   </head>
   <body>
     <div id="unicorn-display"></div>
+    <audio id="audio" controls="" style="visibility: hidden;">
+      <source id="source" type="audio/wav">
+    </audio>
     <script>
       var counter = 0;
+      function getRandomInt( number ) {
+        return Math.floor( number * Math.random() );
+      }
+
       function launchTacos() {
         counter++;
         switch( Math.floor( 8 * Math.random() ) ) {
@@ -141,7 +148,7 @@
             }, 0, -100);
             break;
         }
-        stopConfetti( "Confetti" + counter );
+        stopParticles( "Confetti" + counter, 2000 );
       }
 
       function launchConfetti( imageOverride = "" ) {
@@ -276,21 +283,128 @@
             }, 0, -100);
             break;
         }
-        stopConfetti( "Confetti" + counter );
+        stopParticles( "Confetti" + counter, 2000 );
       }
 
-      function stopConfetti( name ) {
+      function stopParticles( name, time = 2000 ) {
         setTimeout( () => {
           Unicorn.RemoveParticles( name );
-        }, 2000 );
+        }, time );
+      }
+
+      function launchExplosion( count, imageOverride = "" ) {
+        counter++;
+        let explosionScale = Math.min( Math.max( 1, count ), 100 );
+        let spawnX = getRandomInt( 1280 );
+        let spawnY = getRandomInt( 720 );
+        Unicorn.AddParticles( "Explosion" + counter, {
+          blendMode: PIXI.BLEND_MODES.DEFAULT,
+          shape: "circle",
+          // lineDirection: 0,
+          // length: 400,
+          startColor: "#ff0000",
+          endColor: "#FB8200",
+          intensity: 200 * explosionScale * explosionScale, // Scale from 1 - 10
+          minSpeed: 0.0,
+          maxSpeed: 0.15 + explosionScale / 200,
+          gravityX: 0,
+          gravityY: 5,//3.5,
+          fadeOut: true,
+          decay: 1, // Scale from 0 - 10
+          image: imageOverride || undefined
+        }, spawnX, spawnY );
+        Unicorn.AddParticles( "Smoke" + counter, {
+          blendMode: PIXI.BLEND_MODES.SCREEN,
+          shape: "circle",
+          // lineDirection: 0,
+          // length: 400,
+          startColor: "#000000",
+          endColor: "#999999",
+          intensity: 20 * explosionScale, // Scale from 1 - 10
+          minSpeed: 0.0,
+          maxSpeed: 0.1,
+          gravityX: 0,
+          gravityY: -1,
+          growOverTime: true,
+          fadeOut: true,
+          decay: 1, // Scale from 0 - 10
+          image: imageOverride || undefined
+        }, spawnX, spawnY );
+        stopParticles( "Explosion" + counter, 250 );
+        stopParticles( "Smoke" + counter, 500 );
+      }
+
+      function launchFirework( imageOverride = "" ) {
+        counter++;
+        let id = counter;
+        let spawnX = getRandomInt( 1280 );
+        let spawnY = 720 + getRandomInt( 400 );
+        Unicorn.AddParticles( "FireworkTrail" + id, {
+          blendMode: PIXI.BLEND_MODES.COLOR,
+          shape: "circle",
+          startColor: "#6E9887",
+          endColor: "#E06C9F",
+          intensity: 100, // Scale from 1 - 10
+          minSpeed: 0.0,
+          maxSpeed: 0.01,
+          gravityX: 0,
+          gravityY: 10,//3.5,
+          flySpeed: 0.75,
+          fadeOut: true,
+          decay: 0.5, // Scale from 0 - 10
+          image: imageOverride || "assets/kaboomtrail.png"
+        }, spawnX, spawnY );
+        setTimeout( () => {
+          Unicorn.PlaySound( "firework", {
+            volume: 0.1
+          } );
+          let explosionY = spawnY - 0.75 * 1000;
+          Unicorn.AddParticles( "Fireworks" + id, {
+            blendMode: PIXI.BLEND_MODES.LIGHTEN,
+            shape: "circle",
+            startColor: "#D7F9FF",
+            endColor: "#F283B6",
+            intensity: 200, // Scale from 1 - 10
+            minSpeed: 0.2,
+            maxSpeed: 0.5,
+            gravityX: 0,
+            gravityY: 3.5,
+            fadeOut: true,
+            decay: 2, // Scale from 0 - 10
+            image: imageOverride || "assets/kaboomtrail.png"
+          }, spawnX, explosionY );
+        }, 1000 );
+        // Unicorn.AddParticles( "Smoke" + counter, {
+        //   blendMode: PIXI.BLEND_MODES.SCREEN,
+        //   shape: "circle",
+        //   // lineDirection: 0,
+        //   // length: 400,
+        //   startColor: "#000000",
+        //   endColor: "#999999",
+        //   intensity: 20 * explosionScale, // Scale from 1 - 10
+        //   minSpeed: 0.0,
+        //   maxSpeed: 0.1,
+        //   gravityX: 0,
+        //   gravityY: -1,
+        //   growOverTime: true,
+        //   fadeOut: true,
+        //   decay: 1, // Scale from 0 - 10
+        //   image: imageOverride || undefined
+        // }, spawnX, spawnY );
+        stopParticles( "FireworkTrail" + id, 1000 );
+        stopParticles( "Fireworks" + id, 1150 );
       }
 
       function Init() {
         // Add Initialization Here
         Unicorn.Load( "fart", "assets/fart-2.wav" );
         Unicorn.Load( "yay", "assets/yay.mp3" );
+        Unicorn.Load( "explode1", "assets/explode1.mp3" );
+        Unicorn.Load( "explode2", "assets/explode2.mp3" );
+        Unicorn.Load( "firework", "assets/firework.mp3" );
         Unicorn.Load( "unicorn", "assets/Unicorn.png" );
         Unicorn.Load( "ball", "assets/Ball.png" );
+
         // Unicorn.Load( "hamster", "assets/rainbowHammie.png" );
         // Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
         // Unicorn.AddText( "title", "Pink Fluffy Unicorn Game Engine", 50, 50, {
@@ -480,6 +594,55 @@
         if( flags.broadcaster && command == "disconnect" ) {
           Unicorn.DisconnectObjects( "", "ball2" );
         }
+        if( extra.customRewardId === "9c1a252d-ddbe-47df-9b41-433f5ed9570b" ) {
+          let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
+          Unicorn.PlaySound( "explode1", {
+            volume: 0.15 + 0.1 * fireworksScale / 100
+          } );
+          launchExplosion( fireworksScale );
+        }
+        if( extra.customRewardId === "646b24dc-2a9b-4a57-bf6d-3cde3980122e" ) {
+          speakMessage( message );
+          setTimeout( () => {
+            for( var i = 0; i < 50; i++ ) {
+              setTimeout( () => {
+                let fireworksScale = getRandomInt( 100 );
+                Unicorn.PlaySound( "explode1", {
+                  volume: 0.15 + 0.1 * fireworksScale / 100
+                } );
+                launchExplosion( fireworksScale );
+              }, Math.random() * 1000 );
+            }
+          }, 1000 );
+        }
+        // SUPEREXPLOSION
+        if( extra.customRewardId === "9e9befea-c73c-4def-a5ef-b75b43111f14" ) {
+          speakMessage( message );
+          setTimeout( () => {
+            for( var i = 0; i < 1000; i++ ) {
+              setTimeout( () => {
+                let fireworksScale = getRandomInt( 100 );
+                if( getRandomInt( 4 ) === 0 ) {
+                  Unicorn.PlaySound( "explode1", {
+                    volume: 0.15 + 0.1 * fireworksScale / 100
+                  } );
+                }
+                launchExplosion( fireworksScale );
+              }, Math.random() * 15000 );
+            }
+          }, 1000 );
+        }
+        // FIREWORKS!!!
+        if( extra.customRewardId === "2dcba5f9-ddd4-492c-973a-09148ef4028c" ) {
+          speakMessage( message );
+          setTimeout( () => {
+            for( var i = 0; i < 100; i++ ) {
+              setTimeout( () => {
+                launchFirework();
+              }, Math.random() * 10000 );
+            }
+          }, 1000 );
+        }
         if( extra.customRewardId === "24769436-b87c-4370-ab32-e475bebea7a3" ) {
           for( var i = 0; i < 50; i++ ) {
             launchConfetti();
@@ -495,6 +658,29 @@
             launchTacos();
           }
         }
+        // if( command === "explode" ||
+        //     command === "splode" ) {
+        //   let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
+        //   // Unicorn.PlaySound( "explode1", {
+        //   //   volume: 0.15 + 0.1 * fireworksScale / 100
+        //   // } );
+        //   launchExplosion( fireworksScale );
+        // }
+        // if( command === "superexplosion" ||
+        //     command === "extremeplosion" ) {
+        //   for( var i = 0; i < 50; i++ ) {
+        //     setTimeout( () => {
+        //       let fireworksScale = getRandomInt( 100 );
+        //       // Unicorn.PlaySound( "explode1", {
+        //       //   volume: 0.15 + 0.1 * fireworksScale / 100
+        //       // } );
+        //       launchExplosion( fireworksScale );
+        //     }, Math.random() * 1000 );
+        //   }
+        // }
+        if( command === "firework" ) {
+          launchFirework();
+        }
         if( command === "confetti" ||
             command === "party" ||
             command === "birthday" ||
@@ -507,7 +693,7 @@
           //   Unicorn.PlaySound( "yay", {
           //     volume: 0.25
           //   } );
-          //   // stopConfetti();
+          //   // stopParticles();
           // }, 1000 );
         }
         if( command === "boom" ) {
@@ -537,6 +723,56 @@
 
       function OnChatMessage( user, message, flags, self, extra ) {
         // Handle Chat Messages
+        // console.log( extra.customRewardId );
+        if( extra.customRewardId === "9c1a252d-ddbe-47df-9b41-433f5ed9570b" ) {
+          let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
+          Unicorn.PlaySound( "explode1", {
+            volume: 0.15 + 0.1 * fireworksScale / 100
+          } );
+          launchExplosion( fireworksScale );
+        }
+        if( extra.customRewardId === "646b24dc-2a9b-4a57-bf6d-3cde3980122e" ) {
+          speakMessage( message );
+          setTimeout( () => {
+            for( var i = 0; i < 50; i++ ) {
+              setTimeout( () => {
+                let fireworksScale = getRandomInt( 100 );
+                Unicorn.PlaySound( "explode1", {
+                  volume: 0.15 + 0.1 * fireworksScale / 100
+                } );
+                launchExplosion( fireworksScale );
+              }, Math.random() * 1000 );
+            }
+          }, 1000 );
+        }
+        // SUPEREXPLOSION
+        if( extra.customRewardId === "9e9befea-c73c-4def-a5ef-b75b43111f14" ) {
+          speakMessage( message );
+          setTimeout( () => {
+            for( var i = 0; i < 1000; i++ ) {
+              setTimeout( () => {
+                let fireworksScale = getRandomInt( 100 );
+                if( getRandomInt( 4 ) === 0 ) {
+                  Unicorn.PlaySound( "explode1", {
+                    volume: 0.15 + 0.1 * fireworksScale / 100
+                  } );
+                }
+                launchExplosion( fireworksScale );
+              }, Math.random() * 15000 );
+            }
+          }, 1000 );
+        }
+        // FIREWORKS!!!
+        if( extra.customRewardId === "2dcba5f9-ddd4-492c-973a-09148ef4028c" ) {
+          speakMessage( message );
+          setTimeout( () => {
+            for( var i = 0; i < 100; i++ ) {
+              setTimeout( () => {
+                launchFirework();
+              }, Math.random() * 10000 );
+            }
+          }, 1000 );
+        }
         if( extra.customRewardId === "24769436-b87c-4370-ab32-e475bebea7a3" ) {
           for( var i = 0; i < 50; i++ ) {
             launchConfetti();
@@ -547,6 +783,23 @@
             } );
           }, 1000 );
         }
+      }
+
+      async function speakMessage( message, ttsVoice = "Amy" ) {
+        let speak = await fetch( `https://api.streamelements.com/kappa/v2/speech?voice=${ttsVoice}&text=` + encodeURIComponent( message.trim() ) );
+      	if( speak.status != 200 ) {
+      		// await speak.text();
+      		return;
+      	}
+
+        let mp3 = await speak.blob();
+        let blobUrl = URL.createObjectURL( mp3 );
+      	document.getElementById( "source" ).setAttribute( "src", blobUrl );
+      	let audio = document.getElementById( "audio" );
+      	audio.pause();
+      	audio.load();
+        audio.volume = 1;
+      	audio.play();
       }
 
       window.addEventListener('load', () => {

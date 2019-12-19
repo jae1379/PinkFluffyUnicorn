@@ -445,6 +445,10 @@ function AddParticles( name, options, x, y ) {
 		if( name ) {
 			let particleTimer = setInterval( function() {
 				var texture = PIXI.Texture.fromImage( options.image || particleImage );
+				// HACKHACKHACK: just for fireworks
+				if( options.flySpeed ) {
+					y -= options.flySpeed * 1000 / options.intensity;
+				}
 				for( var i = 0; i < 10; i++ ) {
 					var pImage = new PIXI.Sprite( texture );
 					pImage.anchor.set( 0.5 );
@@ -461,16 +465,26 @@ function AddParticles( name, options, x, y ) {
 					options.spread = options.spread || 0;
 					options.lineDirection = options.lineDirection || 0;
 					options.length = options.length || app.view.width;
+					options.gravityX = options.gravityX || 0;
+					options.gravityY = options.gravityY || 0;
+					options.timeInterval = 1000 / options.intensity;
 					pImage.tint = options.startColor;
 					var particleLife = Math.random() * options.decay * 1000;
+					var velocity = Math.random() * ( options.maxSpeed - options.minSpeed ) + options.minSpeed;
 					var particle = {
 						image: pImage,
 						x: x,
 						y: y,
+						vX: 0,
+						vY: 0,
+						growOverTime: options.growOverTime || false,
+						fadeOut: options.fadeOut || false,
 						startColor: options.startColor,
 						endColor: options.endColor,
 						// angle: Math.random() * Math.PI * 2,
-						velocity: Math.random() * ( options.maxSpeed - options.minSpeed ) + options.minSpeed,
+						velocity: velocity,
+						gravityX: options.gravityX,
+						gravityY: options.gravityY,
 						maxLife: particleLife,
 						life: particleLife
 					};
@@ -486,7 +500,12 @@ function AddParticles( name, options, x, y ) {
 							particle.y += Math.sin( options.lineDirection ) * Math.random() * options.length;
 							particle.angle = options.angle + Math.random() * options.spread - options.spread / 2;
 							break;
+						default:
+							particle.angle = options.angle;
 					}
+
+					particle.vX = Math.cos( particle.angle ) * velocity;
+					particle.vY = Math.sin( particle.angle ) * velocity;
 					pImage.x = particle.x;
 					pImage.y = particle.y;
 					var invProgress = particle.life / particle.maxLife;
@@ -726,14 +745,23 @@ function updateTheUnicorn( timestamp ) {
 						continue;
 					}
 					else {
-						particle.x += Math.cos( particle.angle ) * particle.velocity * timeDiff;
-						particle.y += Math.sin( particle.angle ) * particle.velocity * timeDiff;
+						particle.vX += particle.gravityX / 10000 * timeDiff;
+						particle.vY += particle.gravityY / 10000 * timeDiff;
+						particle.x += particle.vX * timeDiff;
+						particle.y += particle.vY * timeDiff;
 						particle.image.x = particle.x;
 						particle.image.y = particle.y;
 						var invProgress = particle.life / particle.maxLife;
 						var progress = 1.0 - invProgress;
-						// particle.image.alpha = invProgress;
-						particle.image.scale = { x: invProgress, y: invProgress };
+						if( particle.fadeOut ) {
+							particle.image.alpha = invProgress;
+						}
+						if( particle.growOverTime ) {
+							particle.image.scale = { x: progress, y: progress };
+						}
+						else {
+							particle.image.scale = { x: invProgress, y: invProgress };
+						}
 						particle.image.tint = lerpColor( particle.startColor, particle.endColor, progress );
 						// console.log( particle );
 					}
