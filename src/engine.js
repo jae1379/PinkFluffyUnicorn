@@ -18,6 +18,9 @@ function CropAsset( name, srcName, x, y, width, height ) {
 }
 
 function LoadAsset( name, path ) {
+	if( typeof( name ) === "object" ) {
+		return Object.keys( name ).map( x => LoadAsset( x, name[ x ] ) );
+	}
 	var fileExt = path.split('.').pop();
 	switch( fileExt ) {
 		case "jpg":
@@ -63,6 +66,9 @@ function AddBacklay( name, assetName, x, y, options ) {
 	try {
 		// TODO: Check that the overlay name doesn't already exist
 		if( name ) {
+			if( typeof( name ) === "object" ) {
+				return Object.keys( name ).map( x => AddBacklay( x, name[ x ].asset, name[ x ].x, name[ x ].y, name[ x ].options ) );
+			}
 			var sprite = new PIXI.Sprite(
 				assetReference[ assetName ]
 			);
@@ -118,6 +124,9 @@ function AddOverlay( name, assetName, x, y, options ) {
 	try {
 		// TODO: Check that the overlay name doesn't already exist
 		if( name ) {
+			if( typeof( name ) === "object" ) {
+				return Object.keys( name ).map( x => AddOverlay( x, name[ x ].asset, name[ x ].x, name[ x ].y, name[ x ].options ) );
+			}
 			var sprite = new PIXI.Sprite(
 				assetReference[ assetName ]
 			);
@@ -175,6 +184,9 @@ function RemoveOverlay( name ) {
 function AddText( name, text, x, y, options ) {
 	try {
 		if( name ) {
+			if( typeof( name ) === "object" ) {
+				return Object.keys( name ).map( x => AddText( x, name[ x ].asset, name[ x ].x, name[ x ].y, name[ x ].options ) );
+			}
 			var textObj = new PIXI.Text( text, new PIXI.TextStyle( options ) );
 			textObj.x = x;
 			textObj.y = y;
@@ -202,6 +214,9 @@ function RemoveText( name ) {
 }
 
 function AddDetector( name, options, onEnter, onExit ) {
+	if( typeof( name ) === "object" ) {
+		return Object.keys( name ).map( x => AddDetector( x, name[ x ].options, name[ x ].onEnter, name[ x ].onExit ) );
+	}
 	options = Object.assign( options, {
 		isDetector: true,
 		onEnter: onEnter,
@@ -218,6 +233,9 @@ function AddObject( name, options ) {
 	try {
 		// TODO: Check that the object name doesn't already exist
 		if( name ) {
+			if( typeof( name ) === "object" ) {
+				return Object.keys( name ).map( x => AddObject( x, name[ x ] ) );
+			}
 			if( Array.isArray( options ) ) {
 				// TODO: Add Composite Object Support
 				throw new Error( "Composite Objects Not Supported" );

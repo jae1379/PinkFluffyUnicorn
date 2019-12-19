@@ -397,13 +397,45 @@
 
       function Init() {
         // Add Initialization Here
-        Unicorn.Load( "fart", "assets/fart-2.wav" );
-        Unicorn.Load( "yay", "assets/yay.mp3" );
-        Unicorn.Load( "explode1", "assets/explode1.mp3" );
-        Unicorn.Load( "explode2", "assets/explode2.mp3" );
-        Unicorn.Load( "firework", "assets/firework.mp3" );
-        Unicorn.Load( "unicorn", "assets/Unicorn.png" );
-        Unicorn.Load( "ball", "assets/Ball.png" );
+        // Unicorn.Load( "fart", "assets/fart-2.wav" );
+        // Unicorn.Load( "yay", "assets/yay.mp3" );
+        // Unicorn.Load( "explode1", "assets/explode1.mp3" );
+        // Unicorn.Load( "explode2", "assets/explode2.mp3" );
+        // Unicorn.Load( "firework", "assets/firework.mp3" );
+        // Unicorn.Load( "unicorn", "assets/Unicorn.png" );
+        // Unicorn.Load( "ball", "assets/Ball.png" );
+        Unicorn.Load({
+          "fart": "assets/fart-2.wav",
+          "yay": "assets/yay.mp3",
+          "explode1": "assets/explode1.mp3",
+          "explode2": "assets/explode2.mp3",
+          "firework": "assets/firework.mp3",
+          "unicorn": "assets/Unicorn.png",
+          "ball": "assets/Ball.png",
+        });
+
+        // Unicorn.AddObject( {
+        //   "ball1": {
+        //     type: "circle",
+        //     x: 64, y: 64,
+        //     radius: 64,
+        //     sprite: "ball",
+        //     friction: 0.01,
+        //     onHover: function() {
+        //       this.alpha = 0.5;
+        //     },
+        //     onLeave: function() {
+        //       this.alpha = 1;
+        //     }
+        //   },
+        //   "ball2": {
+        //     type: "circle",
+        //     x: 256, y: 64,
+        //     radius: 64,
+        //     // sprite: "ball",
+        //     friction: 0.02
+        //   }
+        // });
 
         // Unicorn.Load( "hamster", "assets/rainbowHammie.png" );
         // Unicorn.AddOverlay( "icon", "unicorn", 100, 100 );
