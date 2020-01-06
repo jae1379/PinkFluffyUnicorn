@@ -274,7 +274,65 @@ function AddObject( name, options ) {
 				detectExit[ name ] = options.onExit;
 			}
 
-			if( options.sprite ) {
+			if( options.animations ) {
+				for( var anim in options.animations ) {
+					var sprite = new PIXI.AnimatedSprite(
+						options.animations[ anim ].frames.map( a => assetReference[ a ] )
+					);
+					sprite.animationSpeed = options.animations[ anim ].framerate || ( 10 / 60 );
+					sprite.loop = options.animations[ anim ].loop;
+					sprite.onComplete = options.animations[ anim ].onComplete;
+					sprite.visible = false;
+					sprite.anchor.set( 0.5 );
+					sprite.x = body.position.x;
+					sprite.y = body.position.y;
+					sprite.rotation = body.angle;
+					objectSprite[ body.id ] = sprite;
+					if( options.z ) {
+						sprite.zIndex = options.z;
+					}
+					if( options.scale ) {
+						sprite.scale.x = options.scale.x;
+						sprite.scale.y = options.scale.y;
+					}
+					groupWorld.addChild( sprite );
+					var isInteractive = false;
+					if( options.onPress instanceof Function ) {
+						isInteractive = true;
+						sprite.on( "pointerdown", options.onPress );
+					}
+					if( options.onRelease instanceof Function ) {
+						isInteractive = true;
+						sprite.on( "pointerup", options.onRelease );
+						sprite.on( "pointerupoutside", options.onRelease );
+					}
+					if( options.onHover instanceof Function ) {
+						isInteractive = true;
+						sprite.on( "pointerover", options.onHover );
+					}
+					if( options.onLeave instanceof Function ) {
+						isInteractive = true;
+						sprite.on( "pointerout", options.onLeave );
+					}
+					if( options.onMove instanceof Function ) {
+						isInteractive = true;
+						sprite.on( "pointermove", options.onMove );
+					}
+					if( isInteractive ) {
+						sprite.interactive = true;
+						sprite.buttonMode = true;
+					}
+					if( !body.animations ) {
+						body.animations = {};
+					}
+					body.animations[ anim ] = sprite;
+				}
+				// Set to the first animation
+				body.currentAnimation = Object.keys( body.animations )[ 0 ];
+				body.animations[ body.currentAnimation ].visible = true;
+				body.animations[ body.currentAnimation ].gotoAndPlay( 0 );
+			}
+			else if( options.sprite ) {
 				var sprite = new PIXI.Sprite(
 					assetReference[ options.sprite ]
 				);
@@ -285,6 +343,10 @@ function AddObject( name, options ) {
 				objectSprite[ body.id ] = sprite;
 				if( options.z ) {
 					sprite.zIndex = options.z;
+				}
+				if( options.scale ) {
+					sprite.scale.x = options.scale.x;
+					sprite.scale.y = options.scale.y;
 				}
 				groupWorld.addChild( sprite );
 				var isInteractive = false;
@@ -347,6 +409,10 @@ function AddObject( name, options ) {
 				if( options.z ) {
 					sprite.zIndex = options.z;
 				}
+				if( options.scale ) {
+					sprite.scale.x = options.scale.x;
+					sprite.scale.y = options.scale.y;
+				}
 				groupWorld.addChild( sprite );
 				var isInteractive = false;
 				if( options.onPress instanceof Function ) {
@@ -396,6 +462,23 @@ function RemoveObject( name ) {
 		delete objects[ name ];
 		delete detectEnter[ name ]; // remove any detectors if exist
 		delete detectExit[ name ]; // remove any detectors if exist
+	}
+}
+
+function PlayObjectAnimation( name, animation, startFrame = 0, shouldLoop = false ) {
+	if( objects[ name ] && objects[ name ].animations && objects[ name ].animations[ animation ] ) {
+		objects[ name ].animations[ objects[ name ].currentAnimation ].visible = false;
+		objects[ name ].animations[ objects[ name ].currentAnimation ].stop();
+		objects[ name ].currentAnimation = animation;
+		objects[ name ].animations[ objects[ name ].currentAnimation ].visible = true;
+		objects[ name ].animations[ objects[ name ].currentAnimation ].loop = shouldLoop;
+		objects[ name ].animations[ objects[ name ].currentAnimation ].gotoAndPlay( startFrame );
+	}
+}
+
+function StopObjectAnimation( name ) {
+	if( objects[ name ] && objects[ name ].animations ) {
+		objects[ name ].animations[ objects[ name ].currentAnimation ].stop();
 	}
 }
 
@@ -825,6 +908,8 @@ window.Unicorn = {
 	RemoveObject: RemoveObject,
 	ConnectObjects: ConnectObjects,
 	DisconnectObjects: DisconnectObjects,
+	PlayObjectAnimation: PlayObjectAnimation,
+	StopObjectAnimation: StopObjectAnimation,
 	AddText: AddText,
 	RemoveText: RemoveText,
 	AddDetector: AddDetector,
