@@ -77,6 +77,13 @@ function AddBacklay( name, assetName, x, y, options ) {
 			groupBacklay.addChild( sprite );
 			overlays[ name ] = sprite;
 			if( options ) {
+				if( options.z ) {
+					sprite.zIndex = options.z;
+				}
+				if( options.scale ) {
+					sprite.scale.x = options.scale.x;
+					sprite.scale.y = options.scale.y;
+				}
 				var isInteractive = false;
 				if( options.onPress instanceof Function ) {
 					isInteractive = true;
@@ -138,6 +145,10 @@ function AddOverlay( name, assetName, x, y, options ) {
 				if( options.z ) {
 					sprite.zIndex = options.z;
 				}
+				if( options.scale ) {
+					sprite.scale.x = options.scale.x;
+					sprite.scale.y = options.scale.y;
+				}
 				var isInteractive = false;
 				if( options.onPress instanceof Function ) {
 					isInteractive = true;
@@ -195,6 +206,10 @@ function AddText( name, text, x, y, options ) {
 			if( options ) {
 				if( options.z ) {
 					textObj.zIndex = options.z;
+				}
+				if( options.scale ) {
+					textObj.scale.x = options.scale.x;
+					textObj.scale.y = options.scale.y;
 				}
 			}
 			return textObj;
@@ -287,7 +302,10 @@ function AddObject( name, options ) {
 					sprite.x = body.position.x;
 					sprite.y = body.position.y;
 					sprite.rotation = body.angle;
-					objectSprite[ body.id ] = sprite;
+					if( !objectSprite[ body.id ] ) {
+						objectSprite[ body.id ] = [];
+					}
+					objectSprite[ body.id ].push( sprite );
 					if( options.z ) {
 						sprite.zIndex = options.z;
 					}
@@ -455,7 +473,14 @@ function AddObject( name, options ) {
 
 function RemoveObject( name ) {
 	if( objects[ name ] ) {
-		groupWorld.removeChild( objectSprite[ objects[ name ].id ] );
+		if( Array.isArray( objectSprite[ objects[ name ].id ] ) ) {
+			objectSprite[ objects[ name ].id ].forEach( o => {
+				groupWorld.removeChild( o );
+			});
+		}
+		else {
+			groupWorld.removeChild( objectSprite[ objects[ name ].id ] );
+		}
 		delete objectSprite[ objects[ name ].id ];
 		groupWorld.removeChild( objects[ name ] );
 		Matter.Composite.remove( physics.world, objects[ name ] );
@@ -465,13 +490,12 @@ function RemoveObject( name ) {
 	}
 }
 
-function PlayObjectAnimation( name, animation, startFrame = 0, shouldLoop = false ) {
+function PlayObjectAnimation( name, animation, startFrame = 0 ) {
 	if( objects[ name ] && objects[ name ].animations && objects[ name ].animations[ animation ] ) {
 		objects[ name ].animations[ objects[ name ].currentAnimation ].visible = false;
 		objects[ name ].animations[ objects[ name ].currentAnimation ].stop();
 		objects[ name ].currentAnimation = animation;
 		objects[ name ].animations[ objects[ name ].currentAnimation ].visible = true;
-		objects[ name ].animations[ objects[ name ].currentAnimation ].loop = shouldLoop;
 		objects[ name ].animations[ objects[ name ].currentAnimation ].gotoAndPlay( startFrame );
 	}
 }
@@ -833,9 +857,18 @@ function updateTheUnicorn( timestamp ) {
 		physics.world.bodies.forEach( b => {
 			var sprite = objectSprite[ b.id ];
 			if( sprite ) {
-				sprite.x = b.position.x;
-				sprite.y = b.position.y;
-				sprite.rotation = b.angle;
+				if( Array.isArray( sprite ) ) {
+					sprite.forEach( s => {
+						s.x = b.position.x;
+						s.y = b.position.y;
+						s.rotation = b.angle;
+					});
+				}
+				else {
+					sprite.x = b.position.x;
+					sprite.y = b.position.y;
+					sprite.rotation = b.angle;
+				}
 			}
 		});
 		var timeDiff = timestamp - prevStep;
