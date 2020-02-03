@@ -631,7 +631,7 @@
         if( extra.customRewardId === "aa293422-d373-4357-ab9c-59689642b83a" ) {
           let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
           Unicorn.PlaySound( "explode1", {
-            volume: 0.15 + 0.1 * fireworksScale / 100
+            volume: 0.1 + 0.1 * fireworksScale / 100
           } );
           launchExplosion( fireworksScale );
         }
@@ -642,7 +642,7 @@
               setTimeout( () => {
                 let fireworksScale = getRandomInt( 100 );
                 Unicorn.PlaySound( "explode1", {
-                  volume: 0.15 + 0.1 * fireworksScale / 100
+                  volume: 0.1 + 0.1 * fireworksScale / 100
                 } );
                 launchExplosion( fireworksScale );
               }, Math.random() * 1000 );
@@ -658,11 +658,11 @@
                 let fireworksScale = getRandomInt( 100 );
                 if( getRandomInt( 4 ) === 0 ) {
                   Unicorn.PlaySound( "explode1", {
-                    volume: 0.15 + 0.1 * fireworksScale / 100
+                    volume: 0.1 + 0.1 * fireworksScale / 100
                   } );
                 }
                 launchExplosion( fireworksScale );
-              }, Math.random() * 15000 );
+              }, Math.random() * 10000 );
             }
           }, 1000 );
         }
@@ -683,7 +683,7 @@
           }
           setTimeout( () => {
             Unicorn.PlaySound( "yay", {
-              volume: 0.25
+              volume: 0.20
             } );
           }, 1000 );
         }
@@ -730,29 +730,6 @@
           //   // stopParticles();
           // }, 1000 );
         }
-        if( command === "boom" ) {
-          Unicorn.SetVelocity( "ball1", -50, -10 );
-        }
-        if( command === "ball" ) {
-          Unicorn.AddObject( "bam" + counter++, {
-            type: "circle",
-            x: 128, y: 64,
-            radius: 64,
-            sprite: "ball",
-            friction: 0.02
-          } );
-        }
-        if( command === "balls" ) {
-          for( var i = 0; i < 5; i++ ) {
-            Unicorn.AddObject( "bam" + counter++, {
-              type: "circle",
-              x: 128, y: 64,
-              radius: 64,
-              sprite: "ball",
-              friction: 0.02
-            } );
-          }
-        }
       }
 
       function OnChatMessage( user, message, flags, self, extra ) {
@@ -761,7 +738,7 @@
         if( extra.customRewardId === "aa293422-d373-4357-ab9c-59689642b83a" ) {
           let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
           Unicorn.PlaySound( "explode1", {
-            volume: 0.15 + 0.1 * fireworksScale / 100
+            volume: 0.1 + 0.1 * fireworksScale / 100
           } );
           launchExplosion( fireworksScale );
         }
@@ -772,7 +749,7 @@
               setTimeout( () => {
                 let fireworksScale = getRandomInt( 100 );
                 Unicorn.PlaySound( "explode1", {
-                  volume: 0.15 + 0.1 * fireworksScale / 100
+                  volume: 0.1 + 0.1 * fireworksScale / 100
                 } );
                 launchExplosion( fireworksScale );
               }, Math.random() * 1000 );
@@ -788,11 +765,11 @@
                 let fireworksScale = getRandomInt( 100 );
                 if( getRandomInt( 4 ) === 0 ) {
                   Unicorn.PlaySound( "explode1", {
-                    volume: 0.15 + 0.1 * fireworksScale / 100
+                    volume: 0.1 + 0.1 * fireworksScale / 100
                   } );
                 }
                 launchExplosion( fireworksScale );
-              }, Math.random() * 15000 );
+              }, Math.random() * 10000 );
             }
           }, 1000 );
         }
@@ -813,7 +790,7 @@
           }
           setTimeout( () => {
             Unicorn.PlaySound( "yay", {
-              volume: 0.25
+              volume: 0.20
             } );
           }, 1000 );
         }
