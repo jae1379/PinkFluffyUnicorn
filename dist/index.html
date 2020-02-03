@@ -628,14 +628,14 @@
         if( flags.broadcaster && command == "disconnect" ) {
           Unicorn.DisconnectObjects( "", "ball2" );
         }
-        if( extra.customRewardId === "9c1a252d-ddbe-47df-9b41-433f5ed9570b" ) {
+        if( extra.customRewardId === "aa293422-d373-4357-ab9c-59689642b83a" ) {
           let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
           Unicorn.PlaySound( "explode1", {
             volume: 0.15 + 0.1 * fireworksScale / 100
           } );
           launchExplosion( fireworksScale );
         }
-        if( extra.customRewardId === "646b24dc-2a9b-4a57-bf6d-3cde3980122e" ) {
+        if( extra.customRewardId === "05e6c40d-2801-4368-bc7f-b6f7a188813a" ) {
           speakMessage( message );
           setTimeout( () => {
             for( var i = 0; i < 50; i++ ) {
@@ -650,7 +650,7 @@
           }, 1000 );
         }
         // SUPEREXPLOSION
-        if( extra.customRewardId === "9e9befea-c73c-4def-a5ef-b75b43111f14" ) {
+        if( extra.customRewardId === "af8d8368-7244-45b4-b624-077808d74afd" ) {
           speakMessage( message );
           setTimeout( () => {
             for( var i = 0; i < 1000; i++ ) {
@@ -667,7 +667,7 @@
           }, 1000 );
         }
         // FIREWORKS!!!
-        if( extra.customRewardId === "2dcba5f9-ddd4-492c-973a-09148ef4028c" ) {
+        if( extra.customRewardId === "117e58b2-58fa-4fea-9cad-f800261a3271" ) {
           speakMessage( message );
           setTimeout( () => {
             for( var i = 0; i < 100; i++ ) {
@@ -677,7 +677,7 @@
             }
           }, 1000 );
         }
-        if( extra.customRewardId === "24769436-b87c-4370-ab32-e475bebea7a3" ) {
+        if( extra.customRewardId === "70a77aa8-7e97-402f-b32b-a735a5ab031e" ) {
           for( var i = 0; i < 50; i++ ) {
             launchConfetti();
           }
@@ -758,14 +758,14 @@
       function OnChatMessage( user, message, flags, self, extra ) {
         // Handle Chat Messages
         // console.log( extra.customRewardId );
-        if( extra.customRewardId === "9c1a252d-ddbe-47df-9b41-433f5ed9570b" ) {
+        if( extra.customRewardId === "aa293422-d373-4357-ab9c-59689642b83a" ) {
           let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
           Unicorn.PlaySound( "explode1", {
             volume: 0.15 + 0.1 * fireworksScale / 100
           } );
           launchExplosion( fireworksScale );
         }
-        if( extra.customRewardId === "646b24dc-2a9b-4a57-bf6d-3cde3980122e" ) {
+        if( extra.customRewardId === "05e6c40d-2801-4368-bc7f-b6f7a188813a" ) {
           speakMessage( message );
           setTimeout( () => {
             for( var i = 0; i < 50; i++ ) {
@@ -780,7 +780,7 @@
           }, 1000 );
         }
         // SUPEREXPLOSION
-        if( extra.customRewardId === "9e9befea-c73c-4def-a5ef-b75b43111f14" ) {
+        if( extra.customRewardId === "af8d8368-7244-45b4-b624-077808d74afd" ) {
           speakMessage( message );
           setTimeout( () => {
             for( var i = 0; i < 1000; i++ ) {
@@ -797,7 +797,7 @@
           }, 1000 );
         }
         // FIREWORKS!!!
-        if( extra.customRewardId === "2dcba5f9-ddd4-492c-973a-09148ef4028c" ) {
+        if( extra.customRewardId === "117e58b2-58fa-4fea-9cad-f800261a3271" ) {
           speakMessage( message );
           setTimeout( () => {
             for( var i = 0; i < 100; i++ ) {
@@ -807,7 +807,7 @@
             }
           }, 1000 );
         }
-        if( extra.customRewardId === "24769436-b87c-4370-ab32-e475bebea7a3" ) {
+        if( extra.customRewardId === "70a77aa8-7e97-402f-b32b-a735a5ab031e" ) {
           for( var i = 0; i < 50; i++ ) {
             launchConfetti();
           }
@@ -844,7 +844,7 @@
           background: "transparent",
           init: Init,
           update: Update,
-          channel: "Instafluff",
+          channel: "jae1379",
           onCommand: OnChatCommand,
           onChat: OnChatMessage,
           // screenWalls: false // Default: true
