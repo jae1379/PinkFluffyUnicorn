@@ -642,7 +642,7 @@
               setTimeout( () => {
                 let fireworksScale = getRandomInt( 100 );
                 Unicorn.PlaySound( "explode1", {
-                  volume: 0.05 + 0.02 * fireworksScale / 100
+                  volume: 0.05 + 0.01 * fireworksScale / 100
                 } );
                 launchExplosion( fireworksScale );
               }, Math.random() * 1000 );
@@ -658,11 +658,11 @@
                 let fireworksScale = getRandomInt( 100 );
                 if( getRandomInt( 4 ) === 0 ) {
                   Unicorn.PlaySound( "explode1", {
-                    volume: 0.05 + 0.02 * fireworksScale / 100
+                    volume: 0.05 + 0.01 * fireworksScale / 100
                   } );
                 }
                 launchExplosion( fireworksScale );
-              }, Math.random() * 5500 );
+              }, Math.random() * 6000 );
             }
           }, 1000 );
         }
@@ -683,7 +683,7 @@
           }
           setTimeout( () => {
             Unicorn.PlaySound( "yay", {
-              volume: 0.20
+              volume: 0.15
             } );
           }, 1000 );
         }
@@ -738,7 +738,7 @@
         if( extra.customRewardId === "aa293422-d373-4357-ab9c-59689642b83a" ) {
           let fireworksScale = Math.max( 100, parseInt( message ) || 1 );
           Unicorn.PlaySound( "explode1", {
-            volume: 0.05 + 0.02 * fireworksScale / 100
+            volume: 0.05 + 0.01 * fireworksScale / 100
           } );
           launchExplosion( fireworksScale );
         }
@@ -749,7 +749,7 @@
               setTimeout( () => {
                 let fireworksScale = getRandomInt( 100 );
                 Unicorn.PlaySound( "explode1", {
-                  volume: 0.05 + 0.02 * fireworksScale / 100
+                  volume: 0.05 + 0.01 * fireworksScale / 100
                 } );
                 launchExplosion( fireworksScale );
               }, Math.random() * 1000 );
@@ -765,11 +765,11 @@
                 let fireworksScale = getRandomInt( 100 );
                 if( getRandomInt( 4 ) === 0 ) {
                   Unicorn.PlaySound( "explode1", {
-                    volume: 0.05 + 0.02 * fireworksScale / 100
+                    volume: 0.05 + 0.01 * fireworksScale / 100
                   } );
                 }
                 launchExplosion( fireworksScale );
-              }, Math.random() * 5500 );
+              }, Math.random() * 6000 );
             }
           }, 1000 );
         }
@@ -790,7 +790,7 @@
           }
           setTimeout( () => {
             Unicorn.PlaySound( "yay", {
-              volume: 0.20
+              volume: 0.15
             } );
           }, 1000 );
         }
