@@ -715,21 +715,6 @@
         if( command === "firework" ) {
           launchFirework();
         }
-        if( command === "confetti" ||
-            command === "party" ||
-            command === "birthday" ||
-            command === "celebrate" ||
-            command === "yay" ) {
-          for( var i = 0; i < 8; i++ ) {
-            launchConfetti();
-          }
-          // setTimeout( () => {
-          //   Unicorn.PlaySound( "yay", {
-          //     volume: 0.25
-          //   } );
-          //   // stopParticles();
-          // }, 1000 );
-        }
       }
 
       function OnChatMessage( user, message, flags, self, extra ) {
